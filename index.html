@@ -17,8 +17,9 @@
 </head>
 
 <body>
+    <script src="js/users.js"></script>
     <section id="starting-page"
-        class=" duration-500 ease-[cubic-bezier(.83,-0.04,.11,.92)] fixed flex flex-col items-center py-10  mb-10 w-full h-screen">
+        class="duration-500 ease-[cubic-bezier(.83,-0.04,.11,.92)] fixed flex flex-col items-center py-10  mb-10 w-full h-screen">
         <div class="header justify-self-start mb-20 max-w-6xl items-center flex justify-between mx-auto w-full px-9">
             <div>
                 <h1 class="text-4xl font-bold">Hi, Mohammed</h1>
@@ -69,18 +70,26 @@
                     <span class="text-[8px] relative -top-2 mr-2">&#9899;</span>
                     <p class="inline font-medium text-xl">CEFR level evaluation (A1-C2)</p>
                 </div>
-                <button onclick="start()" class="relative w-52 h-14 z-50">
-                    <div
-                        class="absolute w-full h-full bg-[#E7803B] border-[#291306] z-[-2] border-2 top-1 left-1 rounded-xl">
-                    </div>
-                    <div
-                        class="relative active:top-1 active:left-1  w-full h-full bg-[#FAC29D] z-[200] border-[#291306] text-[#291306] font-medium border-2 rounded-xl flex justify-start items-center text-xl px-5 gap-5">
-                        Start test
-                        <span class="rotate-45 material-symbols-outlined">
-                            arrow_forward
+                <div class="flex justify-between">
+
+                    <button onclick="start()" class="relative w-52 h-14 z-50">
+                        <div
+                            class="absolute w-full h-full bg-[#E7803B] border-[#291306] z-[-2] border-2 top-1 left-1 rounded-xl">
+                        </div>
+                        <div
+                            class="relative active:top-1 active:left-1  w-full h-full bg-[#FAC29D] z-[200] border-[#291306] text-[#291306] font-medium border-2 rounded-xl flex justify-start items-center text-xl px-5 gap-5">
+                            Start test
+                            <span class="rotate-45 material-symbols-outlined">
+                                arrow_forward
+                            </span>
+                        </div>
+                    </button>
+                    <button onclick="logout()" class="text-2xl text-red-800 flex items-center gap-5">
+                        logout
+                        <span class="material-symbols-outlined text-2xl">
+                            logout
                         </span>
-                    </div>
-                </button>
+                </div>
             </div>
         </div>
     </section>

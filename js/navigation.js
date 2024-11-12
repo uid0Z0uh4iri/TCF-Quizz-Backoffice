@@ -1,6 +1,7 @@
 const startPage = document.getElementById('starting-page')
 const QApage = document.getElementById('q-a-page')
 const resultsPage = document.getElementById('results-page')
+const loginPage = document.getElementById('login-page')
 
 function start() {
     [QApage, startPage].forEach(page => {
@@ -9,6 +10,21 @@ function start() {
     });
     resultsPage.classList.remove('-translate-y-full')
     resetGame();
+}
+
+function logedIn() {
+    [loginPage, startPage].forEach(page => {
+        page.classList.add('-translate-y-full')
+        page.classList.remove('-translate-y-[200%]')
+    });
+    resultsPage.classList.remove('-translate-y-full')
+}
+
+function logedOut() {
+    [loginPage, startPage].forEach(page => {
+        page.classList.remove('-translate-y-full', '-translate-y-[200%]')
+    });
+    resultsPage.classList.remove('-translate-y-full')
 }
 
 function exit() {

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Quiz Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .login-form, .dashboard {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .login-form {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        .login-form h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+        .login-form input[type="text"], .login-form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            border: none;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .login-form button:hover {
+            background-color: #218838;
+        }
+        .dashboard {
+            display: none;
+        }
+        .menu {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+        .menu button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        .content {
+            display: none;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .content.active {
+            display: block;
+        }
+        .logout-button {
+            padding: 10px 20px;
+            background-color: #dc3545;
+            border: none;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            align-self: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-form">
+            <h2>Admin Login</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="login()">Login</button>
+        </div>
+        <div class="dashboard">
+            <h2>Welcome back, Admin!</h2>
+            <div class="menu">
+                <button onclick="toggleContent('quiz-management')">1 - Quiz Question Management</button>
+                <button onclick="toggleContent('user-results')">2 - 📊 User Results Tracking</button>
+                <button onclick="toggleContent('pdf-report')">3 - 📄 PDF Report Generation</button>
+                <button onclick="toggleContent('general-stats')">4 - 📈 General Statistics and Dashboard</button>
+            </div>
+            <div id="quiz-management" class="content">
+              <h2>Quiz Question Management</h2>
+              <form id="question-form">
+                  <input type="text" id="question-input" placeholder="Question" required>
+                  <input type="text" id="answer1-input" placeholder="Answer 1" required>
+                  <input type="text" id="answer2-input" placeholder="Answer 2" required>
+                  <input type="text" id="answer3-input" placeholder="Answer 3" required>
+                  <input type="text" id="answer4-input" placeholder="Answer 4" required>
+                  <input type="number" id="correct-answer-input" placeholder="Correct Answer Index (0-3)" required>
+                  <button type="submit">Add Question</button>
+              </form>
+              <div id="existing-questions"></div>
+          </div>
+            <div id="user-results" class="content">
+                <h2>User Results Tracking</h2>
+                <p>Track and analyze user performance over time.</p>
+            </div>
+            <div id="pdf-report" class="content">
+                <h2>PDF Report Generation</h2>
+                <p>Generate detailed reports in PDF format.</p>
+            </div>
+            <div id="general-stats" class="content">
+                <h2>General Statistics and Dashboard</h2>
+                <p>View overall statistics and insights.</p>
+            </div>
+            <button class="logout-button" onclick="logout()">Logout</button>
+        </div>
+    </div>
+    <script>
+        function login() {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            if (username === 'admin' && password === 'admin') {
+                document.querySelector('.login-form').style.display = 'none';
+                document.querySelector('.dashboard').style.display = 'block';
+            } else {
+                alert('Invalid credentials');
+            }
+        }
+
+        function toggleContent(id) {
+            var contents = document.querySelectorAll('.content');
+            contents.forEach(function(content) {
+                content.classList.remove('active');
+            });
+            var content = document.getElementById(id);
+            content.classList.add('active');
+        }
+
+        function logout() {
+            document.querySelector('.dashboard').style.display = 'none';
+            document.querySelector('.login-form').style.display = 'block';
+        }
+
+
+
+        let questions = JSON.parse(localStorage.getItem('quizQuestions')) || [];
+
+function renderQuestions() {
+    const existingQuestionsDiv = document.getElementById('existing-questions');
+    existingQuestionsDiv.innerHTML = ''; // Clear existing questions
+    questions.forEach((q, index) => {
+        existingQuestionsDiv.innerHTML += `
+            <div>
+                <p>${q.question}</p>
+                <button onclick="editQuestion(${index})">Edit</button>
+                <button onclick="deleteQuestion(${index})">Delete</button>
+            </div>
+        `;
+    });
+}
+
+document.getElementById('question-form').onsubmit = function(e) {
+    e.preventDefault();
+    const question = document.getElementById('question-input').value;
+    const answers = [
+        document.getElementById('answer1-input').value,
+        document.getElementById('answer2-input').value,
+        document.getElementById('answer3-input').value,
+        document.getElementById('answer4-input').value,
+    ];
+    const correctIndex = parseInt(document.getElementById('correct-answer-input').value);
+
+    questions.push({ question, answers, correct: correctIndex });
+    localStorage.setItem('quizQuestions', JSON.stringify(questions));
+    renderQuestions();
+    document.getElementById('question-form').reset(); // Clear form
+};
+
+function deleteQuestion(index) {
+    questions.splice(index, 1);
+    localStorage.setItem('quizQuestions', JSON.stringify(questions));
+    renderQuestions();
+}
+
+function editQuestion(index) {
+    const q = questions[index];
+    document.getElementById('question-input').value = q.question;
+    document.getElementById('answer1-input').value = q.answers[0];
+    document.getElementById('answer2-input').value = q.answers[1];
+    document.getElementById('answer3-input').value = q.answers[2];
+    document.getElementById('answer4-input').value = q.answers[3];
+    document.getElementById('correct-answer-input').value = q.correct;
+    deleteQuestion(index); // Remove the question to avoid duplication
+}
+
+window.onload = function() {
+    renderQuestions(); // Load existing questions on page load
+};
+
+
+</script>
+</body>
+</html>

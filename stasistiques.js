@@ -51,7 +51,7 @@ const usersData = [
           },
           vocabulary: {
             validation: false,
-            attempts: 0,
+            attempts: 1,
             time: 0,
           },
           conjugation: {
@@ -977,38 +977,58 @@ const usersData = [
 function populatePerformanceTable(usersData) {
   const tableBody = document.getElementById("performanceTableBody");
 
-  if (!Array.isArray(usersData)) {
-    console.error("Invalid usersData: Expected an array.");
-    return;
-  }
-
   const levelCounts = usersData.reduce((counts, user) => {
     if (!user.levels) return counts;
 
     for (const levelKey in user.levels) {
       const categories = user.levels[levelKey]?.categories;
 
-      counts[levelKey] = counts[levelKey] || { total: 0, validated: 0 };
-      counts[levelKey].total += 1;
+      // Check if all categories are validated
+      const allCategoriesValidated = Object.values(categories).every(
+        (category) => category.validation
+      );
 
-      if (categories) {
-        const allCategoriesValidated = Object.values(categories).every(
-          (category) => category.validation
+      // Initialize counts for the level if not already done
+      if (!counts[levelKey]) {
+        counts[levelKey] = { total: 0, validated: 0, users: [] };
+      }
+
+      // Count the user based on validation
+      if (allCategoriesValidated) {
+        counts[levelKey].validated += 1; // Increment validated count
+        counts[levelKey].total += 1; // Increment total count
+        counts[levelKey].users.push(user.name); // Add user to the list
+      } else {
+        // If not validated, check attempts
+        const hasAttempts = Object.values(categories).some(
+          (category) => category.attempts > 0
         );
-        if (allCategoriesValidated) counts[levelKey].validated += 1;
+
+        if (hasAttempts) {
+          counts[levelKey].total += 1; // Increment total count if attempts > 0
+          counts[levelKey].users.push(user.name); // Add user to the list
+        }
       }
     }
     return counts;
   }, {});
 
-  Object.entries(levelCounts).forEach(([level, { total, validated }]) => {
-    const successRate =
-      total > 0 ? ((validated / total) * 100).toFixed(2) + "%" : "N/A";
-    const row = document.createElement("tr");
-    row.appendChild(createCell(level));
-    row.appendChild(createCell(successRate));
-    tableBody.appendChild(row);
-  });
+  // Populate the table with the results
+  Object.entries(levelCounts).forEach(
+    ([level, { total, validated, users }]) => {
+      const successRate =
+        total > 0 ? ((validated / total) * 100).toFixed(2) + "%" : "N/A";
+      const row = document.createElement("tr");
+      row.appendChild(createCell(level));
+      row.appendChild(createCell(successRate));
+      tableBody.appendChild(row);
+
+      // Log the details for debugging
+      console.log(
+        `Level: ${level}, Total: ${total}, Validated: ${validated}, Users: ${users}`
+      );
+    }
+  );
 }
 
 function createCell(text) {
@@ -1018,6 +1038,7 @@ function createCell(text) {
   return cell;
 }
 
+// Assuming this function is called when the page loads
 window.onload = () => {
   if (typeof usersData !== "undefined") {
     populatePerformanceTable(usersData);
@@ -1025,3 +1046,4 @@ window.onload = () => {
     console.error("usersData is not defined.");
   }
 };
+

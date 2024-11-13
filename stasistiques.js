@@ -972,7 +972,31 @@ const usersData = [
   },
 ];
 
+function calculateAttempts(categories) {
+  let attempts = 0;
 
+  const allCategoriesValidated = Object.values(categories).every(
+    (category) => category.validation
+  );
+
+  if (allCategoriesValidated) {
+    const attemptsCount = Object.values(categories).reduce((sum, category) => {
+      return sum + category.attempts;
+    }, 0);
+
+    if (attemptsCount === 0) {
+      attempts += 1;
+    } else {
+      attempts += attemptsCount;
+    }
+  } else {
+    attempts += Object.values(categories).reduce((sum, category) => {
+      return sum + category.attempts;
+    }, 0);
+  }
+
+  return attempts;
+}
 
 function populatePerformanceTable(usersData) {
   const tableBody = document.getElementById("performanceTableBody");
@@ -983,49 +1007,39 @@ function populatePerformanceTable(usersData) {
     for (const levelKey in user.levels) {
       const categories = user.levels[levelKey]?.categories;
 
-      // Check if all categories are validated
-      const allCategoriesValidated = Object.values(categories).every(
-        (category) => category.validation
-      );
-
-      // Initialize counts for the level if not already done
       if (!counts[levelKey]) {
-        counts[levelKey] = { total: 0, validated: 0, users: [] };
+        counts[levelKey] = { total: 0, validated: 0, attempts: 0, users: [] };
       }
 
-      // Count the user based on validation
-      if (allCategoriesValidated) {
-        counts[levelKey].validated += 1; // Increment validated count
-        counts[levelKey].total += 1; // Increment total count
-        counts[levelKey].users.push(user.name); // Add user to the list
-      } else {
-        // If not validated, check attempts
-        const hasAttempts = Object.values(categories).some(
-          (category) => category.attempts > 0
-        );
+      const attempts = calculateAttempts(categories);
 
-        if (hasAttempts) {
-          counts[levelKey].total += 1; // Increment total count if attempts > 0
-          counts[levelKey].users.push(user.name); // Add user to the list
+      if (attempts > 0) {
+        counts[levelKey].attempts += attempts;
+        counts[levelKey].total += 1;
+        counts[levelKey].users.push(user.name);
+
+        if (
+          Object.values(categories).every((category) => category.validation)
+        ) {
+          counts[levelKey].validated += 1;
         }
       }
     }
     return counts;
   }, {});
 
-  // Populate the table with the results
   Object.entries(levelCounts).forEach(
-    ([level, { total, validated, users }]) => {
+    ([level, { total, validated, attempts, users }]) => {
       const successRate =
         total > 0 ? ((validated / total) * 100).toFixed(2) + "%" : "N/A";
       const row = document.createElement("tr");
       row.appendChild(createCell(level));
       row.appendChild(createCell(successRate));
+      row.appendChild(createCell(attempts));
       tableBody.appendChild(row);
 
-      // Log the details for debugging
       console.log(
-        `Level: ${level}, Total: ${total}, Validated: ${validated}, Users: ${users}`
+        `Level: ${level}, Total: ${total}, Validated: ${validated}, Attempts: ${attempts}, Users: ${users}`
       );
     }
   );
@@ -1038,7 +1052,6 @@ function createCell(text) {
   return cell;
 }
 
-// Assuming this function is called when the page loads
 window.onload = () => {
   if (typeof usersData !== "undefined") {
     populatePerformanceTable(usersData);
@@ -1046,4 +1059,3 @@ window.onload = () => {
     console.error("usersData is not defined.");
   }
 };
-

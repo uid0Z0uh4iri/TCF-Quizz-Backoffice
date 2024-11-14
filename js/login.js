@@ -19,12 +19,12 @@ function addUser(name) {
     const users = localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : [];
     const exists = users.find(user => user.name === name);
     const id = users.length;
-    const games = []
+    const games = [];
     const levels = {
         A1: {
             categories: {
                 grammar: {
-                    validation: false,
+                    validation: true,
                     attempts: 0,
                     time: 0
                 },

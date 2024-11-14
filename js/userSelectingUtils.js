@@ -15,19 +15,6 @@ const startBtn = document.getElementById('start-btn');
 
 let ready = false;
 
-// available start button
-/* <button id="start-btn" class="relative w-52 h-14 z-50">
-    <div
-        class="absolute w-full h-full bg-[#E7803B] border-[#291306] z-[-2] border-2 top-1 left-1 rounded-xl">
-    </div>
-    <div
-        class="relative active:top-1 active:left-1  w-full h-full bg-[#FAC29D] z-[200] border-[#291306] text-[#291306] font-medium border-2 rounded-xl flex justify-start items-center text-xl px-5 gap-5">
-        Start test
-        <span class="rotate-45 material-symbols-outlined">
-            arrow_forward
-        </span>
-    </div>
-</button> */
 disableStartBtn();
 
 
@@ -111,9 +98,7 @@ function onSelectLevel() {
 }
 
 selectLevelBtns.forEach((btn, index) => {
-    btn.style.userSelect = 'none';
-    btn.querySelectorAll('div')[1].classList.remove('cursor-pointer');
-    btn.classList.add('cursor-pointer');
+
     btn.onclick = () => {
         if (index <= userUnlockedUpTo) {
             selectLevelBtn(btn);
@@ -124,14 +109,22 @@ selectLevelBtns.forEach((btn, index) => {
             onSelectLevel(index);
         }
     };
-    if (index <= userUnlockedUpTo) {
-        unselectLevelBtn(btn);
-    } else {
-        lockLevelBtn(btn);
-    }
 });
 
+function checkAvialableLevels() {
+    selectLevelBtns.forEach((btn, index) => {
+        btn.style.userSelect = 'none';
+        btn.querySelectorAll('div')[1].classList.remove('cursor-pointer');
+        btn.classList.add('cursor-pointer');
+        if (index <= userUnlockedUpTo) {
+            unselectLevelBtn(btn);
+        } else {
+            lockLevelBtn(btn);
+        }
+    });
+}
 
+checkAvialableLevels();
 function selectCategory(cat) {
     const btnDivs = cat.querySelectorAll('div');
     btnDivs[0].classList.remove('bg-[#E7803B]', 'bg-[#2A9023]', 'bg-[#AAAAAA]');

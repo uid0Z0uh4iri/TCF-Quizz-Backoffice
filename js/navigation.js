@@ -93,7 +93,7 @@ function displayResults() {
 
     const history = JSON.parse(localStorage.getItem('history')) || [];
     const finalScore = document.getElementById('final-score');
-    finalScore.textContent = `${Score + '/' + questions.length}`;
+    finalScore.textContent = `${Score + '/' + chosenQs.length}`;
 
     const levelElement = document.getElementById('language-level');
     const level = calculateLevel(Score);

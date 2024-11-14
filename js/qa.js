@@ -7,6 +7,7 @@ let TimeOuts = [];
 let CanGoNext = false;
 let Freezed = false;
 let CurrentQuestion = null
+let chosenQs = []
 function press(element, color = true) {
     element.classList.add('top-1', 'left-1');
     if (color) {
@@ -39,7 +40,7 @@ function setActive(element) {
 }
 
 function nextQuestion() {
-    let { answers, question } = questions[Level];
+    let { answers, question } = chosenQs[Level];
     const correctAnswer = answers.find(answer => answer.correct);
     answers = shuffle(answers);
     answers = answers.filter(answer => !answer.correct).slice(0, 3).concat(correctAnswer);
@@ -54,7 +55,7 @@ function displayQuestion() {
     let questionContainer = document.querySelector('.question');
     let answersContainer = document.querySelectorAll('.answer-container  span');
     let questionCounter = document.querySelector('.question-counter');
-    questionCounter.textContent = `Question ${Level + 1}/${questions.length}`;
+    questionCounter.textContent = `Question ${Level + 1}/${chosenQs.length}`;
     questionContainer.textContent = CurrentQuestion.question;
     answersContainer.forEach((container, index) => {
         const answer = CurrentQuestion.answers[index];
@@ -80,7 +81,7 @@ function submit() {
         return;
     }
     Level++;
-    if (Level === questions.length) {
+    if (Level === chosenQs.length) {
         endGame();
         return;
     }
@@ -176,6 +177,7 @@ function startTimer() {
 }
 
 function startGame() {
+    updateQuestions();
     Intervals.forEach(interval => {
         clearInterval(interval);
     });
@@ -184,6 +186,7 @@ function startGame() {
 }
 
 function endGame() {
+    updateUserProgress(Score);
     displayResults();
 }
 
@@ -248,3 +251,27 @@ function printResults() {
 }
 
 
+function updateQuestions() {
+    const questions = JSON.parse(localStorage.getItem('questions'));
+    const qLevelKeys = Object.keys(questions.level);
+    const qCategoryKeys = Object.keys(questions.level[qLevelKeys[selectedLevel]]);
+    chosenQs = questions.level[qLevelKeys[selectedLevel]][qCategoryKeys[selectedCategory]];
+    console.log(chosenQs)
+}
+
+function updateUserProgress(score) {
+    const userLevelsKeys = Object.keys(user.levels);
+    const userLevCatKeys = Object.keys(user.levels[userLevelsKeys[selectedLevel]].categories);
+
+    const validateLevelCat = chosenQs.length === score;
+
+    if (validateLevelCat) {
+        user.levels[userLevelsKeys[selectedLevel]].categories[userLevCatKeys[selectedCategory]].validation = true;
+    } else {
+        user.levels[userLevelsKeys[selectedLevel]].categories[userLevCatKeys[selectedCategory]].attempts++;
+        console.log(user)
+    }
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    checkLevelValidation();
+    showCheckedCat();
+}

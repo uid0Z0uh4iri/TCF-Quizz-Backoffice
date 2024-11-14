@@ -256,7 +256,7 @@
                         }
                     ]
                 },
-                "BA": {
+                "C1": {
                     "grammar": [
                         {
                             "question": "Quel mot est synonyme de 'triste'?",
@@ -431,6 +431,15 @@
 
         // Call to populate levels on page load
         window.onload = populateLevels;
+
+        let firstLoad = true;
+        if (localStorage.getItem('questions')) {
+    firstLoad = false;
+                                               }
+      if (firstLoad) {
+      localStorage.setItem('questions', JSON.stringify(questions));
+                     }
+
     </script>
 </body>
 </html>

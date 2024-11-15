@@ -256,7 +256,8 @@ function updateQuestions() {
     const qLevelKeys = Object.keys(questions.level);
     const qCategoryKeys = Object.keys(questions.level[qLevelKeys[selectedLevel]]);
     chosenQs = questions.level[qLevelKeys[selectedLevel]][qCategoryKeys[selectedCategory]];
-    console.log(chosenQs)
+    checkAvialableLevels();
+    ShowCheckedCat();
 }
 
 function updateUserProgress(score) {
@@ -272,6 +273,4 @@ function updateUserProgress(score) {
         console.log(user)
     }
     localStorage.setItem('currentUser', JSON.stringify(user));
-    checkAvialableLevels();
-    ShowCheckedCat();
 }

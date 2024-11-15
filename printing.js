@@ -1,30 +1,34 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const currentUser = JSON.parse(localStorage.getItem("currentUser   Data")); // Ensure correct key
-
-  console.log("Current User Data:", currentUser); // Debugging line
+  const currentUser = JSON.parse(localStorage.getItem("currentUserData"));
 
   if (currentUser) {
-    // Display user data on the results page
-    document.getElementById("final-score").textContent =
-      currentUser.games.reduce((total, game) => total + game.score, 0); // Summing up scores
-    document.getElementById("language-level").textContent = currentUser.level; // Assuming level is part of user data
+    // Set the name in the NAMETITLE element
+    const nameTitle = document.getElementById("NAMETITLE");
+    nameTitle.innerText = currentUser.name; // Assuming currentUser  is an object, not an array
 
-    // Populate games summary if necessary
-    const games = currentUser.games || []; // Assuming games is part of user data
+    const totalScore = currentUser.games.reduce(
+      (total, game) => total + game.score,
+      0
+    );
+    document.getElementById("final-score").textContent = totalScore;
+
+    const levelElement = document.getElementById("language-level");
+    const level = calculateLevel(totalScore);
+    levelElement.textContent = level;
+
     const summaryContainer = document.getElementById("questions-summary");
-    summaryContainer.innerHTML = ""; // Clear previous content
+    summaryContainer.innerHTML = "";
 
-    games.forEach((game) => {
-      summaryContainer.innerHTML += displayGameCard(game);
+    currentUser.games.forEach((game) => {
+      if (game.questions && Array.isArray(game.questions)) {
+        game.questions.forEach((question) => {
+          const questionCard = displayQuestionCard(question);
+          summaryContainer.innerHTML += questionCard;
+        });
+      } else {
+        console.warn("Game does not have valid questions.");
+      }
     });
-
-    // Trigger the print function
-    window.print();
-
-    // Redirect back to the PDF generation page after printing
-    window.onafterprint = () => {
-      window.location.href = "PDFGenerationg.html"; // Adjust the path as necessary
-    };
   } else {
     console.error("No current user data found in local storage.");
   }
@@ -58,54 +62,45 @@ function printResults() {
   document.body.innerHTML = originalContent;
 }
 
-function displayQuestionCard(historyItem) {
-  const { type, question, answers, choice, time } = historyItem;
+function displayQuestionCard(question) {
+  const { question: questionText, answers, choice, ending, time } = question;
 
-  // correct bg = linear top to bottom DCFFDA FFFFFF border 0D4F09
-  // wrong bg = linear top to bottom FF8A8A FFFFFF border EF4444
-  // timeout bg = linear top to bottom FFD6A5 FFFFFF border F59E0B
-  //
   const cardHTML = `
-        <div class="z-10  mb-4">
-
-            <div class="relative w-full h-full rounded-xl z-10 border-2 p-6 border-[${
-              type === "correct"
-                ? "#0D4F09"
-                : type === "wrong"
-                ? "#EF4444"
-                : "#F59E0B"
-            }] bg-gradient-to-b from-[${
-    type === "correct" ? "#DCFFDA" : type === "wrong" ? "#FF8A8A" : "#FFD6A5"
-  }] to-white">
-            <h3 class="font-medium text-xl mb-4">${question}</h3>
-            <div class="grid grid-cols-2 gap-4">
-                ${answers
-                  .map(
-                    (answer, index) => `
-                    <div class="relative p-4 rounded-xl ${getAnswerStyle(
-                      type,
-                      index,
-                      choice,
-                      answer.correct
-                    )}">
-                        ${answer.text}
-                    </div>
-                `
-                  )
-                  .join("")}
+    <div class="z-10 mb-4">
+      <div class="relative w-full h-full rounded-xl z-10 border-2 p-6 border-[
+        ${ending === "correct" ? "#0D4F09" : "#EF4444"}
+      ] bg-gradient-to-b from-[
+        ${ending === "correct" ? "#DCFFDA" : "#FF8A8A"}
+      ] to-white">
+        <h3 class="font-medium text-xl mb-4">${questionText}</h3>
+        <div class="grid grid-cols-2 gap-4">
+          ${answers
+            .map(
+              (answer, index) => `
+            <div class="relative p-4 rounded-xl ${getAnswerStyle(
+              ending,
+              index,
+              choice,
+              answer.correct
+            )}">
+              ${answer.text}
             </div>
-            ${time ? `<div class="mt-4 text-right">Time: ${time}s</div>` : ""}
+          `
+            )
+            .join("")}
         </div>
-        </div>
-    `;
+        ${time ? `<div class="mt-4 text-right">Time: ${time}s</div>` : ""}
+      </div>
+    </div>
+  `;
 
   return cardHTML;
 }
 
-function getAnswerStyle(type, index, choice, isCorrect) {
-  if (type === "correct" && index === parseInt(choice)) {
+function getAnswerStyle(ending, index, choice, isCorrect) {
+  if (ending === "correct" && index === parseInt(choice)) {
     return "bg-[#8FCA8A] border-2 border-[#0D4F09]";
-  } else if (type === "wrong" && index === parseInt(choice)) {
+  } else if (ending === "wrong" && index === parseInt(choice)) {
     return "bg-[#FF8A8A] border-2 border-[#0D4F09]";
   } else if (isCorrect) {
     return "bg-[#8FCA8A] border-2 border-[#0D4F09]";
@@ -126,21 +121,12 @@ function getAnswerBackgroundStyle(type, index, choice, isCorrect) {
   }
 }
 
-// Ensure the Score and questions variables are defined here or passed correctly
 function displayResults() {
-  const history = JSON.parse(localStorage.getItem("currentUser Data")) || [];
-  const finalScore = document.getElementById("final-score");
-  finalScore.textContent = `${Score + "/" + questions.length}`; // Ensure Score and questions are defined
-
-  const levelElement = document.getElementById("language-level");
-  const level = calculateLevel(Score); // Ensure Score is defined
-  levelElement.textContent = level;
-
   const summaryContainer = document.getElementById("questions-summary");
   summaryContainer.innerHTML = "";
 
-  history.forEach((historyItem) => {
-    summaryContainer.innerHTML += displayQuestionCard(historyItem);
+  currentUser.forEach((game) => {
+    summaryContainer.innerHTML += displayQuestionCard(game);
   });
 }
 
@@ -151,3 +137,10 @@ function calculateLevel(score) {
   if (score >= 3) return "A2";
   return "A1";
 }
+
+function exit() {
+  window.location.href = "PDFGenerationg.html";
+}
+
+const nameTitle = document.getElementById("NAMETITLE");
+nameTitle.innerText = currentUser[0].name;

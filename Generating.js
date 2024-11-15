@@ -29,7 +29,7 @@ if (Array.isArray(usersData) && usersData.length > 0) {
 
     generateButton.addEventListener("click", () => {
       // Store the user's data in local storage
-      localStorage.setItem("currentUser    Data", JSON.stringify(user)); // Use the correct key
+      localStorage.setItem("currentUserData", JSON.stringify(user)); // Use the correct key
 
       // Navigate to the result page
       window.location.href = "resultPage.html"; // Adjust the path as necessary

@@ -1,6 +1,7 @@
 const A1 = {
     grammar: [
         {
+            id: `q-${Date.now()}`,
             question: "Quel mot est synonyme de 'content'?",
             answers: [
                 { text: "Heureux", correct: true },
@@ -18,6 +19,8 @@ const A1 = {
             ]
         },
         {
+            id: `q-${Date.now()}`,
+
             question: "Quel est l'antonyme de 'rapide'?",
             answers: [
                 { text: "Lent", correct: true },
@@ -35,6 +38,8 @@ const A1 = {
             ]
         },
         {
+            id: `q-${Date.now()}`,
+
             question: "Quel mot est le contraire de 'haut'?",
             answers: [
                 { text: "Bas", correct: true },
@@ -52,6 +57,8 @@ const A1 = {
             ]
         },
         {
+            id: `q-${Date.now()}`,
+
             question: "Quel est l'antonyme de 'difficile'?",
             answers: [
                 { text: "Facile", correct: true },
@@ -69,6 +76,8 @@ const A1 = {
             ]
         },
         {
+            id: `q-${Date.now()}`,
+
             question: "Quel est le synonyme de 'bon'?",
             answers: [
                 { text: "Bien", correct: true },
@@ -86,6 +95,8 @@ const A1 = {
             ]
         },
         {
+            id: `q-${Date.now()}`,
+
             question: "Quelle préposition complète cette phrase : 'Je vais __ Paris.'",
             answers: [
                 { text: "à", correct: true },
@@ -103,6 +114,8 @@ const A1 = {
             ]
         },
         {
+            id: `q-${Date.now()}`,
+
             question: "Quelle est la bonne conjugaison : 'Tu ___ un bon étudiant.'",
             answers: [
                 { text: "es", correct: true },
@@ -120,6 +133,8 @@ const A1 = {
             ]
         },
         {
+            id: `q-${Date.now()}`,
+
             question: "Quelle est la terminaison correcte pour 'ils chant__' au présent?",
             answers: [
                 { text: "ent", correct: true },
@@ -137,6 +152,8 @@ const A1 = {
             ]
         },
         {
+            id: `q-${Date.now()}`,
+
             question: "Quelle est la bonne conjugaison : 'Nous ___ une maison.'",
             answers: [
                 { text: "avons", correct: true },
@@ -154,6 +171,8 @@ const A1 = {
             ]
         },
         {
+            id: `q-${Date.now()}`,
+
             question: "Quelle est la bonne question : '___ allez-vous?'",
             answers: [
                 { text: "Comment", correct: true },
@@ -173,6 +192,8 @@ const A1 = {
     ],
     conjugation: [
         {
+            id: `q-${Date.now()}`,
+
             question: "Quelle est la conjugaison correcte : 'Je ___ (être) fatigué.'",
             answers: [
                 { text: "suis", correct: true },
@@ -190,6 +211,7 @@ const A1 = {
             ]
         },
         {
+            
             question: "Complétez : 'Tu ___ (avoir) un livre.'",
             answers: [
                 { text: "as", correct: true },

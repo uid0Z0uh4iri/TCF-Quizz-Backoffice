@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const currentUser = JSON.parse(localStorage.getItem("currentUser   Data")); // Correct key
+  const currentUser = JSON.parse(localStorage.getItem("currentUser   Data")); // Ensure correct key
 
   console.log("Current User Data:", currentUser); // Debugging line
 

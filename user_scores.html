@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="tailwinsScript/script.js"></script>
+	<link rel="stylesheet" href="css/style.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            background-color: #f7fafc; /* bg-gray-100 */
+        }
+        .container {
+            min-height: 100vh; /* min-h-screen */
+            padding: 1.5rem; /* p-6 */
+        }
+        .content {
+            padding: 1.5rem; /* p-6 */
+            background-color: #ffffff; /* bg-white */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06); /* shadow-md */
+            border-radius: 0.375rem; /* rounded */
+        }
+        .mb-6 {
+            margin-bottom: 1.5rem; /* mb-6 */
+        }
+        .text-xl {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: bold; /* font-bold */
+        }
+        .mb-4 {
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        .flex {
+            display: flex; /* flex */
+        }
+        .space-x-4 > * + * {
+            margin-left: 1rem; /* space-x-4 */
+        }
+        .input, .select {
+            border: 1px solid #d1d5db; /* border border-gray-300 */
+            border-radius: 0.375rem; /* rounded */
+            padding: 0.5rem 0.75rem; /* px-3 py-2 */
+        }
+        .table {
+            width: 100%; /* min-w-full */
+            background-color: #ffffff; /* bg-white */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06); /* shadow-md */
+            border-radius: 0.375rem; /* rounded */
+        }
+        .th, .td {
+            padding: 0.5rem 1rem; /* py-2 px-4 */
+        }
+        .th {
+            background-color: #4a5568; /* bg-gray-700 */
+            color: #ffffff; /* text-white */
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Question Preview Section -->
+          
+
+          <!-- User Score Tracking Dashboard -->
+            <div class="mb-6">
+                <h2 class="text-xl mb-4">Tableau de Bord des Scores</h2>
+                <div class="flex space-x-4 mb-4">
+                    <input type="text" id="searchUser" placeholder="Rechercher un utilisateur..." class="input">
+                    <select id="levelFilter" class="select">
+                        <option value="all">Tous les niveaux</option>
+                        <option value="A1">A1</option>
+                        <option value="A2">A2</option>
+                        <option value="B1">B1</option>
+                        <option value="B2">B2</option>
+                        <option value="C1">C1</option>
+                        <option value="C2">C2</option>
+                    </select>
+                    <select id="dateFilter" class="select">
+                        <option value="latest">Latest</option>
+                        <option value="oldest">Oldest</option>
+                    </select>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="th">Nom d'utilisateur</th>
+                            <th class="th">Niveau</th>
+                            <th class="th">Score</th>
+                            <th class="th">Date de Test</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scoreTable">
+                        <!-- Dynamic content will go here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+
+   
+        // Open and close preview modal
+        function openPreview() {
+            document.getElementById('previewModal').classList.remove('hidden');
+        }
+        function closePreview() {
+            document.getElementById('previewModal').classList.add('hidden');
+        }
+
+        // Sample data for user scores
+        const scores = [
+            { name: 'Simo ', level: 'A1', score: 85, date: '2024-11-11' },
+            { name: 'Lahcen', level: 'B1', score: 92, date: '2024-11-11' },
+            { name: 'Omar', level: 'C2', score: 78, date: '2024-11-11' }
+        ];
+
+        // Function to render score table based on filters
+        function renderScores() {
+            const searchQuery = document.getElementById('searchUser').value.toLowerCase();
+            const levelFilter = document.getElementById('levelFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+
+            let filteredScores = scores.filter(score =>
+                score.name.toLowerCase().includes(searchQuery) &&
+                (levelFilter === 'all' || score.level === levelFilter)
+            );
+
+            if (dateFilter === 'latest') {
+                filteredScores = filteredScores.sort((a, b) => new Date(b.date) - new Date(a.date));
+            } else {
+                filteredScores = filteredScores.sort((a, b) => new Date(a.date) - new Date(b.date));
+            }
+
+            document.getElementById('scoreTable').innerHTML = filteredScores.map(score => `
+                <tr>
+                    <td class="td">${score.name}</td>
+                    <td class="td">${score.level}</td>
+                    <td class="td">${score.score}</td>
+                    <td class="td">${score.date}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Event listeners for filters
+        document.getElementById('searchUser').addEventListener('input', renderScores);
+        document.getElementById('levelFilter').addEventListener('change', renderScores);
+        document.getElementById('dateFilter').addEventListener('change', renderScores);
+
+        // Initial render
+        renderScores();
+ 
+    </script>
+
+  <!-- Material Icons for icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="js/script.js"></script>
+  <script>
+    function logout() {
+        console.log("Logout function called"); // This will log to the console
+        localStorage.removeItem('user'); // Adjust the key as necessary
+        window.location.href = 'index.html'; // Change 'login.html' to your login page URL
+    }
+</script>
+</body>
+</html>

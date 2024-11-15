@@ -28,7 +28,11 @@ if (Array.isArray(usersData) && usersData.length > 0) {
       "text-gray-600 text-base font-bold py-2 px-4 rounded";
 
     generateButton.addEventListener("click", () => {
-      alert(`User  Info:\nName: ${user.name}\nID: ${user.id}`);
+      // Store the user's data in local storage or pass it through URL parameters
+      localStorage.setItem("currentUser Data", JSON.stringify(user));
+
+      // Navigate to the result page
+      window.location.href = "resultPage.html"; // Adjust the path as necessary
     });
 
     buttonCell.appendChild(generateButton);

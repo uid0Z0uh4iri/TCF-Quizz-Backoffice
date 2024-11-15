@@ -2,9 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const currentUser = JSON.parse(localStorage.getItem("currentUserData"));
 
   if (currentUser) {
-    // Set the name in the NAMETITLE element
     const nameTitle = document.getElementById("NAMETITLE");
-    nameTitle.innerText = currentUser.name; // Assuming currentUser  is an object, not an array
+    nameTitle.innerText = currentUser.name;
 
     const totalScore = currentUser.games.reduce(
       (total, game) => total + game.score,

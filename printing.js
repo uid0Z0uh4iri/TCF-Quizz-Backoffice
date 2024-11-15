@@ -1,19 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Retrieve the usersData from local storage
-  const usersData = JSON.parse(localStorage.getItem("usersData"));
-  const currentUser = JSON.parse(localStorage.getItem("currentUser  Data"));
+  const currentUser = JSON.parse(localStorage.getItem("currentUser   Data")); // Correct key
+
+  console.log("Current User Data:", currentUser); // Debugging line
 
   if (currentUser) {
     // Display user data on the results page
-    document.getElementById("final-score").textContent = currentUser.score; // Assuming score is part of user data
+    document.getElementById("final-score").textContent =
+      currentUser.games.reduce((total, game) => total + game.score, 0); // Summing up scores
     document.getElementById("language-level").textContent = currentUser.level; // Assuming level is part of user data
 
-    // Populate questions summary if necessary
-    const history = currentUser.history || []; // Assuming history is part of user data
+    // Populate games summary if necessary
+    const games = currentUser.games || []; // Assuming games is part of user data
     const summaryContainer = document.getElementById("questions-summary");
-    summaryContainer.innerHTML = "";
-    history.forEach((historyItem) => {
-      summaryContainer.innerHTML += displayQuestionCard(historyItem);
+    summaryContainer.innerHTML = ""; // Clear previous content
+
+    games.forEach((game) => {
+      summaryContainer.innerHTML += displayGameCard(game);
     });
 
     // Trigger the print function
@@ -21,8 +23,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Redirect back to the PDF generation page after printing
     window.onafterprint = () => {
-      window.location.href = "Generating.html"; // Adjust the path as necessary
+      window.location.href = "PDFGenerationg.html"; // Adjust the path as necessary
     };
+  } else {
+    console.error("No current user data found in local storage.");
   }
 });
 
@@ -124,7 +128,7 @@ function getAnswerBackgroundStyle(type, index, choice, isCorrect) {
 
 // Ensure the Score and questions variables are defined here or passed correctly
 function displayResults() {
-  const history = JSON.parse(localStorage.getItem("history")) || [];
+  const history = JSON.parse(localStorage.getItem("currentUser Data")) || [];
   const finalScore = document.getElementById("final-score");
   finalScore.textContent = `${Score + "/" + questions.length}`; // Ensure Score and questions are defined
 

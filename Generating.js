@@ -28,8 +28,8 @@ if (Array.isArray(usersData) && usersData.length > 0) {
       "text-gray-600 text-base font-bold py-2 px-4 rounded";
 
     generateButton.addEventListener("click", () => {
-      // Store the user's data in local storage or pass it through URL parameters
-      localStorage.setItem("currentUser Data", JSON.stringify(user));
+      // Store the user's data in local storage
+      localStorage.setItem("currentUser  Data", JSON.stringify(user)); // Use the correct key
 
       // Navigate to the result page
       window.location.href = "resultPage.html"; // Adjust the path as necessary

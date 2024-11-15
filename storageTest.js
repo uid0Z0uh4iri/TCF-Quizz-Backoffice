@@ -639,7 +639,7 @@ const usersData = [
           conjugation: {
             validation: true,
             attempts: 0,
-            time: 0,
+            time: 1,
           },
         },
       },
@@ -648,17 +648,17 @@ const usersData = [
           grammar: {
             validation: true,
             attempts: 0,
-            time: 0,
+            time: 5,
           },
           vocabulary: {
             validation: true,
             attempts: 0,
-            time: 0,
+            time: 30,
           },
           conjugation: {
             validation: true,
             attempts: 0,
-            time: 0,
+            time: 28,
           },
         },
       },
@@ -684,17 +684,17 @@ const usersData = [
       C2: {
         categories: {
           grammar: {
-            validation: false,
+            validation: true,
             attempts: 0,
             time: 0,
           },
           vocabulary: {
-            validation: false,
+            validation: true,
             attempts: 0,
             time: 0,
           },
           conjugation: {
-            validation: false,
+            validation: true,
             attempts: 0,
             time: 0,
           },
@@ -704,13 +704,13 @@ const usersData = [
     games: [
       {
         date: {
-          day: 0,
-          hour: 0,
-          minute: 0,
+          day: 1,
+          hour: 12,
+          minute: 23,
         },
         level: "A1",
         category: "grammar",
-        score: 8,
+        score: 50,
         questions: [
           {
             question: "What is the capital of Italy?",
@@ -722,7 +722,7 @@ const usersData = [
             ],
             choice: 0,
             ending: "correct",
-            time: 4,
+            time: 40,
           },
           {
             question: "What is the capital of Japan?",
@@ -734,7 +734,7 @@ const usersData = [
             ],
             choice: 0,
             ending: "correct",
-            time: 5,
+            time: 25,
           },
         ],
       },
@@ -759,6 +759,42 @@ const usersData = [
             choice: 0,
             ending: "correct",
             time: 3,
+          },
+          {
+            question: "What is the word for 'orange' in French?",
+            answers: [
+              { text: "Orange", correct: true },
+              { text: "Pomme", correct: false },
+              { text: "Banane", correct: false },
+              { text: "Raisin", correct: false },
+            ],
+            choice: 0,
+            ending: "correct",
+            time: 2,
+          },
+        ],
+      },
+      {
+        date: {
+          day: 1,
+          hour: 2,
+          minute: 30,
+        },
+        level: "A2",
+        category: "vocabulary",
+        score: 7,
+        questions: [
+          {
+            question: "What is the word for 'apple' in Spanish?",
+            answers: [
+              { text: "Manzana", correct: true },
+              { text: "Naranja", correct: false },
+              { text: "Plátano", correct: false },
+              { text: "Uva", correct: false },
+            ],
+            choice: 1,
+            ending: "wrong",
+            time: null,
           },
           {
             question: "What is the word for 'orange' in French?",

@@ -112,6 +112,7 @@ selectLevelBtns.forEach((btn, index) => {
 });
 
 function checkAvialableLevels() {
+    console.log('yeeeeeeeeeeeeeeeeeeessss')
     selectLevelBtns.forEach((btn, index) => {
         btn.style.userSelect = 'none';
         btn.querySelectorAll('div')[1].classList.remove('cursor-pointer');

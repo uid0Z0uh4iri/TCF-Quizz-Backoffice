@@ -272,6 +272,6 @@ function updateUserProgress(score) {
         console.log(user)
     }
     localStorage.setItem('currentUser', JSON.stringify(user));
-    checkLevelValidation();
-    showCheckedCat();
+    checkAvialableLevels();
+    ShowCheckedCat();
 }

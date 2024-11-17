@@ -1,7 +1,6 @@
 const A1 = {
     grammar: [
         {
-            id: `q-${Date.now()}`,
             question: "Quel mot est synonyme de 'content'?",
             answers: [
                 { text: "Heureux", correct: true },
@@ -19,7 +18,6 @@ const A1 = {
             ]
         },
         {
-            id: `q-${Date.now()}`,
 
             question: "Quel est l'antonyme de 'rapide'?",
             answers: [
@@ -38,7 +36,6 @@ const A1 = {
             ]
         },
         {
-            id: `q-${Date.now()}`,
 
             question: "Quel mot est le contraire de 'haut'?",
             answers: [
@@ -57,7 +54,6 @@ const A1 = {
             ]
         },
         {
-            id: `q-${Date.now()}`,
 
             question: "Quel est l'antonyme de 'difficile'?",
             answers: [
@@ -76,7 +72,6 @@ const A1 = {
             ]
         },
         {
-            id: `q-${Date.now()}`,
 
             question: "Quel est le synonyme de 'bon'?",
             answers: [
@@ -95,7 +90,6 @@ const A1 = {
             ]
         },
         {
-            id: `q-${Date.now()}`,
 
             question: "Quelle préposition complète cette phrase : 'Je vais __ Paris.'",
             answers: [
@@ -114,7 +108,6 @@ const A1 = {
             ]
         },
         {
-            id: `q-${Date.now()}`,
 
             question: "Quelle est la bonne conjugaison : 'Tu ___ un bon étudiant.'",
             answers: [
@@ -133,7 +126,6 @@ const A1 = {
             ]
         },
         {
-            id: `q-${Date.now()}`,
 
             question: "Quelle est la terminaison correcte pour 'ils chant__' au présent?",
             answers: [
@@ -152,7 +144,6 @@ const A1 = {
             ]
         },
         {
-            id: `q-${Date.now()}`,
 
             question: "Quelle est la bonne conjugaison : 'Nous ___ une maison.'",
             answers: [
@@ -171,7 +162,6 @@ const A1 = {
             ]
         },
         {
-            id: `q-${Date.now()}`,
 
             question: "Quelle est la bonne question : '___ allez-vous?'",
             answers: [
@@ -192,8 +182,6 @@ const A1 = {
     ],
     conjugation: [
         {
-            id: `q-${Date.now()}`,
-
             question: "Quelle est la conjugaison correcte : 'Je ___ (être) fatigué.'",
             answers: [
                 { text: "suis", correct: true },
@@ -211,7 +199,7 @@ const A1 = {
             ]
         },
         {
-            
+
             question: "Complétez : 'Tu ___ (avoir) un livre.'",
             answers: [
                 { text: "as", correct: true },
@@ -539,6 +527,14 @@ const A1 = {
         }
     ]
 };
+
+const catKeys = Object.keys(A1);
+for (let j = 0; j < 3; j++) {
+    A1[catKeys[j]].forEach((q) => {
+        q.id = `q-${Math.round(Math.random() * 1000000)}`;
+    });
+}
+
 const questions = {
     level: {
         A1: A1,

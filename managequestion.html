@@ -1,102 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Question Admin Page</title>
-  <script src="libs/tailwindcss.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Admin Page</title>
+    <script src="libs/tailwindcss.js"></script>
+    <style>
+        .filterBtn {
+            padding: 0.5rem 1rem;
+            background-color: #e2e8f0;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .filterBtn:hover {
+            background-color: #cbd5e0;
+        }
+
+        .filterBtn.active {
+            background-color: #4299e1;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
+
 <body class="bg-gray-100 p-8">
-  <!-- Admin Page Header -->
-  <header class="mb-6">
-    <h1 class="text-2xl font-bold">Question Admin Page</h1>
-    <button
-      id="createQuestionBtn"
-      class="mt-4 px-4 py-2 bg-blue-500 text-white font-semibold rounded hover:bg-blue-600"
-    >
-      Create Question
-    </button>
-  </header>
+    <!-- Admin Page Header -->
+    <header class="mb-6">
+        <h1 class="text-2xl font-bold">Question Admin Page</h1>
+        <button id="createQuestionBtn"
+            class="mt-4 px-4 py-2 bg-blue-500 text-white font-semibold rounded hover:bg-blue-600">
+            Create Question
+        </button>
+    </header>
 
-  <!-- Questions List -->
-  <section id="questionsList" class="space-y-4">
-    <!-- Question Template -->
-    <!-- Example questions will be dynamically added here -->
-  </section>
+    <!-- Filters -->
+    <section class="mb-6">
+        <div class="mb-4">
+            <h2 class="font-bold">Filter by Level</h2>
+            <div id="levelFilters" class="inline-flex space-x-2">
+                <button class="filterBtn" data-filter-level="A1">A1</button>
+                <button class="filterBtn" data-filter-level="A2">A2</button>
+                <button class="filterBtn" data-filter-level="B1">B1</button>
+                <button class="filterBtn" data-filter-level="B2">B2</button>
+                <button class="filterBtn" data-filter-level="C1">C1</button>
+                <button class="filterBtn" data-filter-level="C2">C2</button>
+            </div>
+        </div>
+        <div>
+            <h2 class="font-bold">Filter by Category</h2>
+            <div id="categoryFilters" class="inline-flex space-x-2">
+                <button class="filterBtn" data-filter-category="grammar">Grammar</button>
+                <button class="filterBtn" data-filter-category="conjugation">Conjugation</button>
+                <button class="filterBtn" data-filter-category="vocabulary">Vocabulary</button>
+            </div>
+        </div>
+    </section>
 
-  <!-- Popup Modal -->
-  <div
-    id="questionModal"
-    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-  >
-    <div class="bg-white p-6 rounded shadow-lg w-full max-w-md">
-      <h2 class="text-xl font-bold mb-4">Create/Edit Question</h2>
-      <form id="questionForm" class="space-y-4">
-        <!-- Level Selector -->
-        <div>
-          <label for="level" class="block font-medium">Select Level</label>
-          <select id="level" class="mt-1 block w-full border rounded px-3 py-2">
-            <option value="a1">A1</option>
-            <option value="a2">A2</option>
-            <option value="b1">B1</option>
-            <option value="b2">B2</option>
-            <option value="c1">C1</option>
-            <option value="c2">C2</option>
-          </select>
-          
+    <!-- Questions List -->
+    <section id="questionsList" class=" grid grid-cols-3 gap-3">
+        <!-- Example questions will be dynamically added here -->
+    </section>
+
+    <!-- Popup Modal -->
+    <div id="questionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded shadow-lg w-full max-w-md">
+            <h2 class="text-xl font-bold mb-4">Create/Edit Question</h2>
+            <form id="questionForm" class="space-y-4">
+                <!-- Level Selector -->
+                <div>
+                    <label for="level" class="block font-medium">Select Level</label>
+                    <select id="level" class="mt-1 block w-full border rounded px-3 py-2">
+                        <option value="">Select a level</option>
+                        <option value="A1">A1</option>
+                        <option value="A2">A2</option>
+                        <option value="B1">B1</option>
+                        <option value="B2">B2</option>
+                        <option value="C1">C1</option>
+                        <option value="C2">C2</option>
+                    </select>
+                </div>
+                <!-- Category Selector -->
+                <div>
+                    <label for="category" class="block font-medium">Select Category</label>
+                    <select id="category" class="mt-1 block w-full border rounded px-3 py-2">
+                        <option value="">Select a category</option>
+                        <option value="grammar">Grammar</option>
+                        <option value="conjugation">Conjugation</option>
+                        <option value="vocabulary">Vocabulary</option>
+                    </select>
+                </div>
+                <!-- Question Input -->
+                <div>
+                    <label for="questionText" class="block font-medium">Question</label>
+                    <textarea id="questionText" rows="3" class="mt-1 block w-full border rounded px-3 py-2"></textarea>
+                </div>
+                <!-- Answers -->
+                <div>
+                    <label class="block font-medium">Answers</label>
+                    <div id="answersContainer" class="space-y-2 max-h-32 overflow-y-scroll"></div>
+                    <div class="flex mt-2">
+                        <input type="text" id="newAnswer" placeholder="Enter answer"
+                            class="flex-grow border rounded px-3 py-2 mr-2" />
+                        <button id="addAnswerBtn" type="button"
+                            class="px-4 py-2 bg-green-500 text-white font-semibold rounded hover:bg-green-600">
+                            Add
+                        </button>
+                    </div>
+                    <p class="answers-errors text-red-500 hidden"></p>
+                </div>
+                <!-- Modal Buttons -->
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelQuestionBtn"
+                        class="px-4 py-2 bg-gray-500 text-white font-semibold rounded hover:bg-gray-600">
+                        Cancel
+                    </button>
+                    <button type="button" id="saveQuestionBtn"
+                        class="px-4 py-2 bg-blue-500 text-white font-semibold rounded hover:bg-blue-600">
+                        Save Question
+                    </button>
+                </div>
+            </form>
         </div>
-        <!-- Category Selector -->
-        <div>
-          <label for="category" class="block font-medium">Select Category</label>
-          <select id="category" class="mt-1 block w-full border rounded px-3 py-2">
-            <option value="grammar">grammar</option>
-            <option value="conjugation">conjugation</option>
-            <option value="vocabulary">vocabulary</option>
-          </select>
-        </div>
-        <!-- Question Input -->
-        <div>
-          <label for="questionText" class="block font-medium">Question</label>
-          <textarea
-            id="questionText"
-            rows="3"
-            class="mt-1 block w-full border rounded px-3 py-2"
-          ></textarea>
-        </div>
-        <!-- Answers -->
-        <div>
-          <label class="block font-medium">Answers</label>
-          <div id="answersContainer" class="space-y-2"></div>
-          <div class="flex mt-2">
-            <input
-              type="text"
-              id="newAnswer"
-              placeholder="Enter answer"
-              class="flex-grow border rounded px-3 py-2 mr-2"
-            />
-            <button
-              id="addAnswerBtn"
-              type="button"
-              class="px-4 py-2 bg-green-500 text-white font-semibold rounded hover:bg-green-600"
-            >
-              Add
-            </button>
-          </div>
-        </div>
-        <!-- Save Button -->
-        <div class="flex justify-end">
-          <button
-            type="button"
-            id="saveQuestionBtn"
-            class="px-4 py-2 bg-blue-500 text-white font-semibold rounded hover:bg-blue-600"
-          >
-            Save Question
-          </button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <script src="js/managequestions.js"></script>
+    <script src="js/managequestions.js"></script>
 </body>
+
 </html>

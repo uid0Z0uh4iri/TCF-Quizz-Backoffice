@@ -208,8 +208,12 @@ function resetGame() {
     const answerBtns = [...document.querySelectorAll('.answer-btn')];
     answerBtns.forEach(btn => {
         release(btn);
-
     });
+    checkAvialableLevels();
+    ShowCheckedCat();
+    resetLevel();
+    resetCat();
+    disableStartBtn();
 }
 
 function addToHistory(type, question, answers, choice, time) {
@@ -273,4 +277,5 @@ function updateUserProgress(score) {
         console.log(user)
     }
     localStorage.setItem('currentUser', JSON.stringify(user));
+    chechUnlockedUpTo();
 }

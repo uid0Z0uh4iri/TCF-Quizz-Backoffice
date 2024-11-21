@@ -17,7 +17,7 @@ function logedIn() {
         page.classList.add('-translate-y-full')
         page.classList.remove('-translate-y-[200%]')
     });
-    resultsPage.classList.remove('-translate-y-full')
+   resultsPage.classList.remove('-translate-y-full')
 }
 
 function logedOut() {
@@ -33,6 +33,7 @@ function exit() {
     });
     resultsPage.classList.remove('-translate-y-full')
     resetGame();
+    preserveSelection();
 }
 
 function displayQuestionCard(historyItem) {

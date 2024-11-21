@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .questions-list {
+            margin-top: 20px;
+        }
+        .question-item {
+            background: #e9ecef;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .edit-button, .remove-button {
+            margin-left: 10px;
+            cursor: pointer;
+            color: blue;
+        }
+        .remove-button {
+            color: red;
+        }
+        .preview {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Quiz Management</h2>
+        <div class="form-group">
+            <label for="level">Select Level:</label>
+            <select id="level" onchange="updateCategories()">
+                <option value="">--Select Level--</option>
+                <!-- Levels will be populated dynamically -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="category">Select Category:</label>
+            <select id="category" onchange="displayQuestions()">
+                <option value="">--Select Category--</option>
+                <!-- Categories will be populated based on level selection -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="question">Question:</label>
+            <input type="text" id="question" placeholder="Enter the question" required oninput="previewQuestion()">
+        </div>
+        <div class="form-group">
+            <label for="answers">Answers (comma separated):</label>
+            <input type="text" id="answers" placeholder="Answer 1, Answer 2, Answer 3, Answer 4" required oninput="previewQuestion()">
+        </div>
+        <div class="form-group">
+            <label for="correct-answer">Correct Answer Index (0-3):</label>
+            <input type="number" id="correct-answer" placeholder="e.g., 0" min="0" max="3" required oninput="previewQuestion()">
+        </div>
+        <button id="submit-button" onclick="submitQuestion()">Add Question</button>
+
+        <div class="preview" id="preview">
+            <h3>Preview:</h3>
+            <p id="preview-question"></p>
+            <p id="preview-answers"></p>
+        </div>
+
+        <div class="questions-list" id="questions-list">
+            <h3>Existing Questions:</h3>
+            <!-- Questions will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        let editIndex = null;
+
+        const questions = {
+            "level": {
+                "A1": {
+                    "grammar": [
+                        {
+                            "question": "Quel mot est synonyme de 'content'?",
+                            "answers": [
+                                { "text": "Heureux", "correct": true },
+                                { "text": "Triste", "correct": false },
+                                { "text": "Fatigué", "correct": false },
+                                { "text": "Colérique", "correct": false }
+                            ]
+                        }
+                    ],
+                    "conjugation": [
+                        {
+                            "question": "Quelle est la conjugaison correcte : 'Je ___ (être) fatigué.'",
+                            "answers": [
+                                { "text": "suis", "correct": true },
+                                { "text": "es", "correct": false },
+                                { "text": "est", "correct": false },
+                                { "text": "sommes", "correct": false }
+                            ]
+                        }
+                    ],
+                    "vocabulary": [
+                        {
+                            "question": "Quel mot désigne un animal domestique ?",
+                            "answers": [
+                                { "text": "Chat", "correct": true },
+                                { "text": "Voiture", "correct": false },
+                                { "text": "Chaise", "correct": false },
+                                { "text": "Arbre", "correct": false }
+                            ]
+                        }
+                    ]
+                },
+                "A2": {
+                    "grammar": [
+                        {
+                            "question": "Quel est l'antonyme de 'rapide'?",
+                            "answers": [
+                                { "text": "Lent", "correct": true },
+                                { "text": "Court", "correct": false },
+                                { "text": "Simple", "correct": false },
+                                { "text": "Grand", "correct": false }
+                            ]
+                        }
+                    ],
+                    "conjugation": [
+                        {
+                            "question": "Complétez : 'Tu ___ (avoir) un livre.'",
+                            "answers": [
+                                { "text": "as", "correct": true },
+                                { "text": "a", "correct": false },
+                                { "text": "ont", "correct": false },
+                                { "text": "étais", "correct": false }
+                            ]
+                        }
+                    ],
+                    "vocabulary": [
+                        {
+                            "question": "Quel mot signifie le contraire de 'triste'?",
+                            "answers": [
+                                { "text": "Heureux", "correct": true },
+                                { "text": "Fatigué", "correct": false },
+                                { "text": "Perdu", "correct": false },
+                                { "text": "Sombre", "correct": false }
+                            ]
+                        }
+                    ]
+                },
+                "B1": {
+                    "grammar": [
+                        {
+                            "question": "Quel est le synonyme de 'bon'?",
+                            "answers": [
+                                { "text": "Bien", "correct": true },
+                                { "text": "Mauvais", "correct": false },
+                                { "text": "Difficile", "correct": false },
+                                { "text": "Facile", "correct": false }
+                            ]
+                        }
+                    ],
+                    "conjugation": [
+                        {
+                            "question": "Complétez : 'Nous ___ (aller) au marché.'",
+                            "answers": [
+                                { "text": "allons", "correct": true },
+                                { "text": "allez", "correct": false },
+                                { "text": "vont", "correct": false },
+                                { "text": "irons", "correct": false }
+                            ]
+                        }
+                    ],
+                    "vocabulary": [
+                        {
+                            "question": "Quel mot est un fruit?",
+                            "answers": [
+                                { "text": "Pomme", "correct": true },
+                                { "text": "Livre", "correct": false },
+                                { "text": "Chaise", "correct": false },
+                                { "text": "Château", "correct": false }
+                            ]
+                        }
+                    ]
+                },
+                "B2": {
+                    "grammar": [
+                        {
+                            "question": "Quelle est la bonne préposition pour compléter : 'Je vais ___ Paris.'",
+                            "answers": [
+                                { "text": "à", "correct": true },
+                                { "text": "dans", "correct": false },
+                                { "text": "par", "correct": false },
+                                { "text": "vers", "correct": false }
+                            ]
+                        }
+                    ],
+                    "conjugation": [
+                        {
+                            "question": "Quelle est la bonne conjugaison : 'Ils ___ (finir) leurs devoirs.'",
+                            "answers": [
+                                { "text": "finissent", "correct": true },
+                                { "text": "finissons", "correct": false },
+                                { "text": "finit", "correct": false },
+                                { "text": "finiraient", "correct": false }
+                            ]
+                        }
+                    ],
+                    "vocabulary": [
+                        {
+                            "question": "Quel mot décrit une couleur?",
+                            "answers": [
+                                { "text": "Bleu", "correct": true },
+                                { "text": "Chien", "correct": false },
+                                { "text": "Livre", "correct": false },
+                                { "text": "Plage", "correct": false }
+                            ]
+                        }
+                    ]
+                },
+                "C1": {
+                    "grammar": [
+                        {
+                            "question": "Quel mot est synonyme de 'triste'?",
+                            "answers": [
+                                { "text": "Malheureux", "correct": true },
+                                { "text": "Joyeux", "correct": false },
+                                { "text": "Satisfait", "correct": false },
+                                { "text": "Enjoué", "correct": false }
+                            ]
+                        }
+                    ],
+                    "conjugation": [
+                        {
+                            "question": "Quelle est la conjugaison correcte pour : 'Nous ___ (être) en vacances.'",
+                            "answers": [
+                                { "text": "sommes", "correct": true },
+                                { "text": "sont", "correct": false },
+                                { "text": "êtes", "correct": false },
+                                { "text": "serons", "correct": false }
+                            ]
+                        }
+                    ],
+                    "vocabulary": [
+                        {
+                            "question": "Quel mot est synonyme de 'rapide'?",
+                            "answers": [
+                                { "text": "Vite", "correct": true },
+                                { "text": "Lent", "correct": false },
+                                { "text": "Paisible", "correct": false },
+                                { "text": "Tranquille", "correct": false }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+
+        function populateLevels() {
+            const levelSelect = document.getElementById('level');
+            const levels = Object.keys(questions.level);
+            levels.forEach(level => {
+                const option = document.createElement('option');
+                option.value = level;
+                option.textContent = level;
+                levelSelect.appendChild(option);
+            });
+        }
+
+        function updateCategories() {
+            const levelSelect = document.getElementById('level');
+            const categorySelect = document.getElementById('category');
+            const selectedLevel = levelSelect.value;
+
+            // Clear previous categories
+            categorySelect.innerHTML = '<option value="">--Select Category--</option>';
+
+            if (selectedLevel) {
+                const categories = Object.keys(questions.level[selectedLevel]);
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                    categorySelect.appendChild(option);
+                });
+            }
+        }
+
+        function displayQuestions() {
+            const levelSelect = document.getElementById('level');
+            const categorySelect = document.getElementById('category');
+            const questionsList = document.getElementById('questions-list');
+
+            const selectedLevel = levelSelect.value;
+            const selectedCategory = categorySelect.value;
+
+            // Clear previous questions
+            questionsList.innerHTML = '<h3>Existing Questions:</h3>';
+
+            if (selectedLevel && selectedCategory) {
+                const questionsToDisplay = questions.level[selectedLevel][selectedCategory];
+                questionsToDisplay.forEach((questionObj, index) => {
+                    const questionItem = document.createElement('div');
+                    questionItem.className = 'question-item';
+                    questionItem.innerHTML = `
+                        <strong>${questionObj.question}</strong><br>
+                        Answers: ${questionObj.answers.map(ans => ans.text).join(', ')}
+                        <span class="edit-button" onclick="editQuestion(${index})">Edit</span>
+                        <span class="remove-button" onclick="removeQuestion(${index})">Remove</span>
+                    `;
+                    questionsList.appendChild(questionItem);
+                });
+            }
+        }
+
+        function submitQuestion() {
+            const levelSelect = document.getElementById('level');
+            const categorySelect = document.getElementById('category');
+            const questionInput = document.getElementById('question');
+            const answersInput = document.getElementById('answers');
+            const correctAnswerInput = document.getElementById('correct-answer');
+
+            const selectedLevel = levelSelect.value;
+            const selectedCategory = categorySelect.value;
+
+            if (selectedLevel && selectedCategory && questionInput.value && answersInput.value && correctAnswerInput.value) {
+                const newQuestion = {
+                    question: questionInput.value,
+                    answers: answersInput.value.split(',').map((text, index) => ({
+                        text: text.trim(),
+                        correct: index === Number(correctAnswerInput.value)
+                    }))
+                };
+
+                if (editIndex !== null) {
+                    questions.level[selectedLevel][selectedCategory][editIndex] = newQuestion;
+                    editIndex = null;
+                    document.getElementById('submit-button').textContent = 'Add Question';
+                } else {
+                    questions.level[selectedLevel][selectedCategory].push(newQuestion);
+                }
+
+                displayQuestions(); // Refresh the displayed questions
+                clearInputs(); // Clear input fields
+            }
+        }
+
+        function clearInputs() {
+            document.getElementById('question').value = '';
+            document.getElementById('answers').value = '';
+            document.getElementById('correct-answer').value = '';
+            document.getElementById('preview-question').textContent = '';
+            document.getElementById('preview-answers').textContent = '';
+        }
+
+        function editQuestion(index) {
+            const levelSelect = document.getElementById('level');
+            const categorySelect = document.getElementById('category');
+            const selectedLevel = levelSelect.value;
+            const selectedCategory = categorySelect.value;
+
+            if (selectedLevel && selectedCategory) {
+                const questionToEdit = questions.level[selectedLevel][selectedCategory][index];
+                document.getElementById('question').value = questionToEdit.question;
+                document.getElementById('answers').value = questionToEdit.answers.map(ans => ans.text).join(', ');
+                document.getElementById('correct-answer').value = questionToEdit.answers.findIndex(ans => ans.correct);
+                editIndex = index;
+                document.getElementById('submit-button').textContent = 'Save Question';
+                previewQuestion();
+            }
+        }
+
+        function removeQuestion(index) {
+            const levelSelect = document.getElementById('level');
+            const categorySelect = document.getElementById('category');
+            const selectedLevel = levelSelect.value;
+            const selectedCategory = categorySelect.value;
+
+            if (selectedLevel && selectedCategory) {
+                questions.level[selectedLevel][selectedCategory].splice(index, 1);
+                displayQuestions(); // Refresh the displayed questions
+            }
+        }
+
+        function previewQuestion() {
+            const questionInput = document.getElementById('question').value;
+            const answersInput = document.getElementById('answers').value;
+            const correctAnswerInput = document.getElementById('correct-answer').value;
+
+            document.getElementById('preview-question').textContent = `Question: ${questionInput}`;
+            document.getElementById('preview-answers').textContent = `Answers: ${answersInput} (Correct Answer Index: ${correctAnswerInput})`;
+        }
+
+        // Call to populate levels on page load
+        window.onload = populateLevels;
+
+        let firstLoad = true;
+        if (localStorage.getItem('questions')) {
+    firstLoad = false;
+                                               }
+      if (firstLoad) {
+      localStorage.setItem('questions', JSON.stringify(questions));
+                     }
+
+    </script>
+</body>
+</html>

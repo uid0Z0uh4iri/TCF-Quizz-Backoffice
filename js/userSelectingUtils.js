@@ -1,4 +1,3 @@
-
 if (!user) {
     alert('No user found');
 }
@@ -76,20 +75,26 @@ function unselectLevelBtn(btn) {
 }
 
 
-levelsLoop:
-for (let i = 0; i < levelsKeys.length; i++) {
-    const level = levelsKeys[i];
-    const catKeys = Object.keys(user.levels[level].categories);
+function chechUnlockedUpTo() {
 
-    for (let j = 0; j < catKeys.length; j++) {
-        const cat = catKeys[j];
+    levelsLoop:
+    for (let i = 0; i < levelsKeys.length; i++) {
+        const level = levelsKeys[i];
+        const catKeys = Object.keys(user.levels[level].categories);
 
-        if (!user.levels[level].categories[cat].validation) {
-            userUnlockedUpTo = i;
-            break levelsLoop;
+        for (let j = 0; j < catKeys.length; j++) {
+            const cat = catKeys[j];
+
+            if (!user.levels[level].categories[cat].validation) {
+                userUnlockedUpTo = i;
+                break levelsLoop;
+            }
         }
     }
+
 }
+
+chechUnlockedUpTo();
 
 function onSelectLevel() {
     resetCat()
@@ -98,7 +103,6 @@ function onSelectLevel() {
 }
 
 selectLevelBtns.forEach((btn, index) => {
-
     btn.onclick = () => {
         if (index <= userUnlockedUpTo) {
             selectLevelBtn(btn);
@@ -112,7 +116,6 @@ selectLevelBtns.forEach((btn, index) => {
 });
 
 function checkAvialableLevels() {
-    console.log('yeeeeeeeeeeeeeeeeeeessss')
     selectLevelBtns.forEach((btn, index) => {
         btn.style.userSelect = 'none';
         btn.querySelectorAll('div')[1].classList.remove('cursor-pointer');
@@ -189,6 +192,12 @@ function resetCat() {
     if (selectedCategory !== null) {
         unselectCategory(SelectCategoryBtns[selectedCategory]);
         selectedCategory = null;
+    }
+}
+function resetLevel() {
+    if (selectedLevel !== null) {
+        unselectLevelBtn(selectLevelBtns[selectedLevel]);
+        selectedLevel = null;
     }
 }
 function ShowCheckedCat() {

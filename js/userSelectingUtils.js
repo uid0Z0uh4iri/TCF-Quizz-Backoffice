@@ -1,4 +1,3 @@
-
 if (!user) {
     alert('No user found');
 }

@@ -280,8 +280,6 @@ function updateQuestions() {
     const questions = JSON.parse(localStorage.getItem('questions'));
     const qLevelKeys = Object.keys(questions.level);
     const qCategoryKeys = Object.keys(questions.level[qLevelKeys[selectedLevel]]);
-    alert(qLevelKeys[selectedLevel])
-    alert(qCategoryKeys[selectedCategory])
     chosenQs = questions.level[qLevelKeys[selectedLevel]][qCategoryKeys[selectedCategory]];
     checkAvialableLevels();
     ShowCheckedCat();

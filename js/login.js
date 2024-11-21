@@ -182,7 +182,6 @@ function login() {
     const name = input.value.toLowerCase();
     user = addUser(name);
     if (user) {
-        alert(user.name + ' logged in');
         localStorage.setItem('currentUser', JSON.stringify(user));
     }
     window.location.href = 'index.html';

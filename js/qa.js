@@ -7,6 +7,7 @@ let TimeOuts = [];
 let CanGoNext = false;
 let Freezed = false;
 let CurrentQuestion = null
+let chosenQs = []
 function press(element, color = true) {
     element.classList.add('top-1', 'left-1');
     if (color) {
@@ -39,7 +40,7 @@ function setActive(element) {
 }
 
 function nextQuestion() {
-    let { answers, question } = questions[Level];
+    let { answers, question } = chosenQs[Level];
     const correctAnswer = answers.find(answer => answer.correct);
     answers = shuffle(answers);
     answers = answers.filter(answer => !answer.correct).slice(0, 3).concat(correctAnswer);
@@ -54,7 +55,7 @@ function displayQuestion() {
     let questionContainer = document.querySelector('.question');
     let answersContainer = document.querySelectorAll('.answer-container  span');
     let questionCounter = document.querySelector('.question-counter');
-    questionCounter.textContent = `Question ${Level + 1}/${questions.length}`;
+    questionCounter.textContent = `Question ${Level + 1}/${chosenQs.length}`;
     questionContainer.textContent = CurrentQuestion.question;
     answersContainer.forEach((container, index) => {
         const answer = CurrentQuestion.answers[index];
@@ -80,7 +81,8 @@ function submit() {
         return;
     }
     Level++;
-    if (Level === questions.length) {
+
+    if (Level === chosenQs.length) {
         endGame();
         return;
     }
@@ -96,6 +98,8 @@ function submit() {
         })
         Freezed = false;
         Active = null;
+        const star = document.getElementById('svg-star');
+        star.classList.remove('fill-red-500');
     }, 500);
     CanGoNext = false;
 }
@@ -142,23 +146,10 @@ function timeReached() {
     Intervals.forEach(interval => {
         clearInterval(interval);
     });
-    const answerBtns = [...document.querySelectorAll('.answer-btn')];
-    const correctAnsIndex = answerBtns
-        .findIndex(btn => btn.parentNode.dataset.answer === CurrentQuestion.answers
-            .findIndex(answer => answer.correct)
-            .toString()
-        );
-    answerBtns[correctAnsIndex].classList.add('bg-green-200');
-    answerBtns[correctAnsIndex].previousElementSibling.classList.add('bg-green-500');
 
-    answerBtns.forEach(btn => {
-        if (btn.parentNode.dataset.answer === correctAnsIndex) {
-            return;
-        }
-        btn.classList.add('bg-gray-200');
-        btn.previousElementSibling.classList.add('bg-gray-500');
-    });
-    addToHistory('timeout', CurrentQuestion.question, CurrentQuestion.answers, null, null);
+    const star = document.getElementById('svg-star');
+
+    star.classList.add('fill-red-500');
     CanGoNext = true;
 }
 
@@ -176,6 +167,9 @@ function startTimer() {
 }
 
 function startGame() {
+    const star = document.getElementById('svg-star');
+    star.classList.remove('fill-red-500');
+    updateQuestions();
     Intervals.forEach(interval => {
         clearInterval(interval);
     });
@@ -184,7 +178,39 @@ function startGame() {
 }
 
 function endGame() {
+    updateUserProgress(Score);
     displayResults();
+    updateSelectionAfterGame();
+}
+
+function updateSelectionAfterGame() {
+    chechUnlockedUpTo();
+    checkAvialableLevels();
+
+    // If the current level is no longer available, reset selection
+    if (selectedLevel !== null && selectedLevel > userUnlockedUpTo) {
+        resetLevel();
+        resetCat();
+        disableStartBtn();
+        return;
+    }
+
+    // If the current category is now validated, mark it as checked
+    if (selectedLevel !== null && selectedCategory !== null) {
+        const level = levelsKeys[selectedLevel];
+        const categories = user.levels[level].categories;
+        const catKey = Object.keys(categories)[selectedCategory];
+
+        if (categories[catKey].validation) {
+            ShowCheckedCat();
+        } else {
+            // If category not validated, reset category selection
+            resetCat();
+        }
+    }
+
+    // Update start button state
+    globalSelectChange();
 }
 
 function resetGame() {
@@ -205,8 +231,10 @@ function resetGame() {
     const answerBtns = [...document.querySelectorAll('.answer-btn')];
     answerBtns.forEach(btn => {
         release(btn);
-
     });
+    if (selectedLevel !== null && selectedCategory !== null) {
+        enableStartBtn();
+    }
 }
 
 function addToHistory(type, question, answers, choice, time) {
@@ -248,3 +276,38 @@ function printResults() {
 }
 
 
+function updateQuestions() {
+    const questions = JSON.parse(localStorage.getItem('questions'));
+    const qLevelKeys = Object.keys(questions.level);
+    const qCategoryKeys = Object.keys(questions.level[qLevelKeys[selectedLevel]]);
+    chosenQs = questions.level[qLevelKeys[selectedLevel]][qCategoryKeys[selectedCategory]];
+    checkAvialableLevels();
+    ShowCheckedCat();
+}
+
+function updateUserProgress(score) {
+    const userLevelsKeys = Object.keys(user.levels);
+    const userLevCatKeys = Object.keys(user.levels[userLevelsKeys[selectedLevel]].categories);
+
+    const validateLevelCat = chosenQs.length === score;
+
+    if (validateLevelCat) {
+        user.levels[userLevelsKeys[selectedLevel]].categories[userLevCatKeys[selectedCategory]].validation = true;
+    } else {
+        user.levels[userLevelsKeys[selectedLevel]].categories[userLevCatKeys[selectedCategory]].attempts++;
+        console.log(user)
+    }
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    chechUnlockedUpTo();
+}
+
+function preserveSelection() {
+    if (selectedLevel !== null) {
+        selectLevelBtn(selectLevelBtns[selectedLevel]);
+        onSelectLevel();
+    }
+    if (selectedCategory !== null) {
+        selectCategory(SelectCategoryBtns[selectedCategory]);
+        globalSelectChange();
+    }
+}

@@ -26,17 +26,14 @@ function addUser(name) {
                 grammar: {
                     validation: true,
                     attempts: 0,
-                    time: 0
                 },
                 vocabulary: {
                     validation: false,
                     attempts: 0,
-                    time: 0
                 },
                 conjugation: {
                     validation: false,
                     attempts: 0,
-                    time: 0
                 },
             }
         },

@@ -17,7 +17,7 @@ function logedIn() {
         page.classList.add('-translate-y-full')
         page.classList.remove('-translate-y-[200%]')
     });
-    resultsPage.classList.remove('-translate-y-full')
+   resultsPage.classList.remove('-translate-y-full')
 }
 
 function logedOut() {
@@ -33,6 +33,7 @@ function exit() {
     });
     resultsPage.classList.remove('-translate-y-full')
     resetGame();
+    preserveSelection();
 }
 
 function displayQuestionCard(historyItem) {
@@ -93,7 +94,7 @@ function displayResults() {
 
     const history = JSON.parse(localStorage.getItem('history')) || [];
     const finalScore = document.getElementById('final-score');
-    finalScore.textContent = `${Score + '/' + questions.length}`;
+    finalScore.textContent = `${Score + '/' + chosenQs.length}`;
 
     const levelElement = document.getElementById('language-level');
     const level = calculateLevel(Score);

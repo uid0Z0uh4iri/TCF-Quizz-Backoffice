@@ -27,7 +27,7 @@ if (Array.isArray(usersData) && usersData.length > 0) {
     });
 
     buttonCell.appendChild(generateButton);
-
+w
     newRow.appendChild(nameCell);
     newRow.appendChild(buttonCell);
 

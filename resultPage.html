@@ -31,6 +31,11 @@
                 </div>
             </div>
         </header>
+        <div class="space-x-16 font-semibold mb-2 text-xl">
+            <label><input type="checkbox" class="mr-1" id="check-all" checked onclick="toggleAll(this)"> All</label>
+            <label><input type="checkbox" class="mr-1" id="show-correct" onclick="toggleCheckbox(this)"> Show Correct</label>
+            <label><input type="checkbox" class="mr-1" id="show-wrong" onclick="toggleCheckbox(this)"> Show wrong</label>
+        </div>
 
         <!-- Score Card -->
         <div id="print-area"
@@ -69,6 +74,7 @@
         </button>
     </section>
     <script src="printing.js"></script>
+
 </body>
 
 </html>

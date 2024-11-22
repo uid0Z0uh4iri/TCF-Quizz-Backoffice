@@ -7,7 +7,9 @@ let TimeOuts = [];
 let CanGoNext = false;
 let Freezed = false;
 let CurrentQuestion = null
+let currentGame = {};
 let chosenQs = []
+
 function press(element, color = true) {
     element.classList.add('top-1', 'left-1');
     if (color) {
@@ -115,6 +117,7 @@ function correctAnswer() {
         btn.classList.add('bg-gray-200');
         btn.previousElementSibling.classList.add('bg-gray-500');
     });
+    storeQuestionResult(CurrentQuestion, 'correct', Active, Timer);
     addToHistory('correct', CurrentQuestion.question, CurrentQuestion.answers, Active, Timer);
 }
 
@@ -131,13 +134,8 @@ function wrongAnswer() {
             btn.previousElementSibling.classList.add('bg-gray-500');
         }
     });
-    const correctAnsIndex = answerBtns
-        .findIndex(btn => btn.parentNode.dataset.answer === CurrentQuestion.answers
-            .findIndex(answer => answer.correct)
-            .toString()
-        );
-    answerBtns[correctAnsIndex].classList.remove('bg-gray-200');
-    answerBtns[correctAnsIndex].previousElementSibling.classList.remove('bg-gray-500');
+
+    storeQuestionResult(CurrentQuestion, 'wrong', Active);
     addToHistory('wrong', CurrentQuestion.question, CurrentQuestion.answers, Active, null);
 }
 
@@ -151,6 +149,9 @@ function timeReached() {
 
     star.classList.add('fill-red-500');
     CanGoNext = true;
+
+    storeQuestionResult(CurrentQuestion, 'timeout');
+    addToHistory('timeout', CurrentQuestion.question, CurrentQuestion.answers, null, null);
 }
 
 function startTimer() {
@@ -173,11 +174,14 @@ function startGame() {
     Intervals.forEach(interval => {
         clearInterval(interval);
     });
+    localStorage.setItem('history', JSON.stringify([]));
     nextQuestion();
     displayQuestion();
 }
 
 function endGame() {
+    saveGameToHistory();
+    resetHistoryGamrObject();
     updateUserProgress(Score);
     displayResults();
     updateSelectionAfterGame();
@@ -237,18 +241,6 @@ function resetGame() {
     }
 }
 
-function addToHistory(type, question, answers, choice, time) {
-    const history = JSON.parse(localStorage.getItem('history')) || [];
-    history.push({
-        type,
-        question,
-        answers,
-        choice,
-        time
-    });
-    localStorage.setItem('history', JSON.stringify(history));
-}
-
 function printResults() {
     const originalContent = document.body.innerHTML
     const classesToRemove = ['header']
@@ -275,7 +267,6 @@ function printResults() {
     document.body.innerHTML = originalContent
 }
 
-
 function updateQuestions() {
     const questions = JSON.parse(localStorage.getItem('questions'));
     const qLevelKeys = Object.keys(questions.level);
@@ -298,6 +289,10 @@ function updateUserProgress(score) {
         console.log(user)
     }
     localStorage.setItem('currentUser', JSON.stringify(user));
+    let users = JSON.parse(localStorage.getItem('users'));
+    const userIndex = users.findIndex(u => u.id === user.id);
+    users[userIndex] = user;
+    localStorage.setItem('users', JSON.stringify(users));
     chechUnlockedUpTo();
 }
 
@@ -310,4 +305,57 @@ function preserveSelection() {
         selectCategory(SelectCategoryBtns[selectedCategory]);
         globalSelectChange();
     }
+}
+
+function resetHistoryGamrObject() {
+    currentGame = {
+        questions: []
+    };
+}
+
+function saveGameToHistory() {
+    const perfectScore = Score === chosenQs.length;
+    currentGame.id = Date.now();
+    currentGame.score = perfectScore ? 10 : 0;
+    currentGame.level = levelsKeys[selectedLevel];
+    currentGame.category = Object.keys(user.levels[levelsKeys[selectedLevel]].categories)[selectedCategory],
+    currentGame.date = {
+        day: new Date().getDate(),
+        month: new Date().getMonth(),
+        year: new Date().getFullYear(),
+        hour: new Date().getHours(),
+        minute: new Date().getMinutes()
+    }
+    const users = JSON.parse(localStorage.getItem('users'));
+    const userIndex = users.findIndex(u => u.id === user.id);
+    users[userIndex].games.push(currentGame);
+    localStorage.setItem('users', JSON.stringify(users));
+    user.games.push(currentGame);
+    localStorage.setItem('currentUser', JSON.stringify(user));
+}
+
+function storeQuestionResult(q, ending, choice = null, time = null) {
+    const question = {
+        question: q.question,
+        answers: q.answers,
+        time,
+        choice,
+        ending
+    }
+    if (currentGame.questions === undefined) {
+        currentGame.questions = [];
+    }
+    currentGame.questions.push(question);
+}
+
+function addToHistory(type, question, answers, choice, time) {
+    const history = JSON.parse(localStorage.getItem('history')) || [];
+    history.push({
+        type,
+        question,
+        answers,
+        choice,
+        time
+    });
+    localStorage.setItem('history', JSON.stringify(history));
 }

@@ -26,7 +26,7 @@ function addUser(name) {
         minutes: new Date().getMinutes(),
         seconds: new Date().getSeconds(),
     }
-    const id = users.length;
+    const id = Date.now();
     const games = [];
     const levels = {
         A1: {

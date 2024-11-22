@@ -109,9 +109,6 @@ function displayResults() {
 }
 
 function calculateLevel(score) {
-    if (score >= 9) return 'C1';
-    if (score >= 7) return 'B2';
-    if (score >= 5) return 'B1';
-    if (score >= 3) return 'A2';
-    return 'A1';
+    const perfectScore = chosenQs.length === score;
+    return perfectScore ? 'success +10' : 'fail +0';
 }

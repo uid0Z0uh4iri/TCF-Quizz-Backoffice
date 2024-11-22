@@ -18,6 +18,14 @@ input.addEventListener('input', () => {
 function addUser(name) {
     const users = localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : [];
     const exists = users.find(user => user.name === name);
+    const date = {
+        day: new Date().getDate(),
+        month: new Date().getMonth(),
+        year: new Date().getFullYear(),
+        hours: new Date().getHours(),
+        minutes: new Date().getMinutes(),
+        seconds: new Date().getSeconds(),
+    }
     const id = users.length;
     const games = [];
     const levels = {
@@ -136,7 +144,7 @@ function addUser(name) {
 
 
     if (!exists) {
-        const user = { name, id, levels, games };
+        const user = { name, id, levels, games, date };
         users.push(user);
         localStorage.setItem('users', JSON.stringify(users));
         return user;

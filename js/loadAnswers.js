@@ -547,4 +547,12 @@ const questions = {
 }
 
 
-let firstLoad=true;
+let firstLoad = true;
+
+if (localStorage.getItem('questions')) {
+    firstLoad = false;
+}
+
+if (firstLoad) {
+    localStorage.setItem('questions', JSON.stringify(questions));
+}

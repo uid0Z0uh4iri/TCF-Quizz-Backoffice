@@ -32,7 +32,7 @@ function addUser(name) {
         A1: {
             categories: {
                 grammar: {
-                    validation: true,
+                    validation: false,
                     attempts: 0,
                 },
                 vocabulary: {

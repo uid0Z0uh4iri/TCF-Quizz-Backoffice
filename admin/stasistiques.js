@@ -24,10 +24,10 @@ function calculateAttempts(categories) {
   return attempts;
 }
 
-function populatePerformanceTable(usersData) {
+function populatePerformanceTable(users) {
   const tableBody = document.getElementById("performanceTableBody");
 
-  const levelCounts = usersData.reduce((counts, user) => {
+  const levelCounts = users.reduce((counts, user) => {
     if (!user.levels) return counts;
 
     for (const levelKey in user.levels) {
@@ -80,14 +80,14 @@ function createCell(text) {
 
 window.onload = () => {
   // Retrieve the JSON string from localStorage
-  const retrievedDataString = localStorage.getItem("usersData");
+  const retrievedDataString = localStorage.getItem("users");
 
   // Parse the JSON string back into a JavaScript object
-  const usersData = JSON.parse(retrievedDataString);
+  const users = JSON.parse(retrievedDataString);
 
-  if (usersData) {
-    populatePerformanceTable(usersData);
+  if (users) {
+    populatePerformanceTable(users);
   } else {
-    console.error("No data found in localStorage for usersData.");
+    console.error("No data found in localStorage for users.");
   }
 };

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const currentUser = JSON.parse(localStorage.getItem("currentUserData"));
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
   if (currentUser) {
     const nameTitle = document.getElementById("NAMETITLE");
@@ -50,21 +50,21 @@ function displayResults(games) {
 }
 
 document.getElementById("show-correct").addEventListener("change", () => {
-  const currentUser = JSON.parse(localStorage.getItem("currentUserData"));
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   if (currentUser) {
     filterQuestions(currentUser.games);
   }
 });
 
 document.getElementById("show-wrong").addEventListener("change", () => {
-  const currentUser = JSON.parse(localStorage.getItem("currentUserData"));
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   if (currentUser) {
     filterQuestions(currentUser.games);
   }
 });
 
 document.getElementById("check-all").addEventListener("change", () => {
-  const currentUser = JSON.parse(localStorage.getItem("currentUserData"));
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   if (currentUser) {
     filterQuestions(currentUser.games);
   }
@@ -178,7 +178,7 @@ function calculateLevel(score) {
 }
 
 function exit() {
-  window.location.href = "PDFGenerationg.html";
+  window.location.href = "PDFGeneration.html";
 }
 
 const nameTitle = document.getElementById("NAMETITLE");

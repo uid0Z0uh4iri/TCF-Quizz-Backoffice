@@ -261,8 +261,6 @@ function printResults() {
     })
 
     document.body.querySelector('#results-page').classList.remove('h-screen', "fixed", "-translate-y-full")
-    console.log(document.body)
-
     window.print()
     document.body.innerHTML = originalContent
 }
@@ -286,7 +284,6 @@ function updateUserProgress(score) {
         user.levels[userLevelsKeys[selectedLevel]].categories[userLevCatKeys[selectedCategory]].validation = true;
     } else {
         user.levels[userLevelsKeys[selectedLevel]].categories[userLevCatKeys[selectedCategory]].attempts++;
-        console.log(user)
     }
     localStorage.setItem('currentUser', JSON.stringify(user));
     let users = JSON.parse(localStorage.getItem('users'));

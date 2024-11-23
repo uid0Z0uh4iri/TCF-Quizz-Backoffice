@@ -149,7 +149,6 @@ function addUser(name) {
         localStorage.setItem('users', JSON.stringify(users));
         return user;
     } else {
-        console.log('User already exists');
         return exists;
     }
 }

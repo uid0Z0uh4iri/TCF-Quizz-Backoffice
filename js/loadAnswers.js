@@ -182,7 +182,7 @@ const A1 = {
     ],
     conjugation: [
         {
-            question: "Quelle est la conjugaison correcte : 'Je ___ (être) fatigué.'",
+            question: "Conj Quelle est la conjugaison correcte : 'Je ___ (être) fatigué.'",
             answers: [
                 { text: "suis", correct: true },
                 { text: "es", correct: false },

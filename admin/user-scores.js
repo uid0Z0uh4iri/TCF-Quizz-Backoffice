@@ -20,10 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
             let levelScore = 0;
             for (const category in user.levels[level].categories) {
                 if (user.levels[level].categories[category].validation) {
-                    levelScore++;
-                    totalScore++;
+                    levelScore += 10; // Each category is worth 10 points
                 }
             }
+            totalScore += levelScore;
             if (levelScore > 0) {
                 highestLevel = level;
             }

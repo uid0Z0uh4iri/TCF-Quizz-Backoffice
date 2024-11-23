@@ -2,20 +2,33 @@ document.addEventListener('DOMContentLoaded', function() {
     // Retrieve users from local storage
     const users = JSON.parse(localStorage.getItem('users')) || [];
 
+    // Add a placeholder test date for demonstration
+    users.forEach(user => {
+        user.testDate = new Date().toISOString().split('T')[0]; // Current date as placeholder
+    });
+
     // Get the table body
     const tableBody = document.querySelector('#scoresTable tbody');
 
-    // Function to calculate total score
-    function calculateTotalScore(user) {
+    // Function to calculate total score and highest level
+    function calculateUserStats(user) {
         let totalScore = 0;
-        for (const level in user.levels) {
+        let highestLevel = 'A1';
+        const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+
+        for (const level of levels) {
+            let levelScore = 0;
             for (const category in user.levels[level].categories) {
                 if (user.levels[level].categories[category].validation) {
+                    levelScore++;
                     totalScore++;
                 }
             }
+            if (levelScore > 0) {
+                highestLevel = level;
+            }
         }
-        return totalScore;
+        return { totalScore, highestLevel };
     }
 
     // Function to display users
@@ -23,13 +36,12 @@ document.addEventListener('DOMContentLoaded', function() {
         tableBody.innerHTML = '';
         usersToDisplay.forEach(user => {
             const row = document.createElement('tr');
-            const totalScore = calculateTotalScore(user);
+            const { totalScore, highestLevel } = calculateUserStats(user);
             row.innerHTML = `
                 <td>${user.name}</td>
                 <td>${totalScore}</td>
-                <td>${Object.keys(user.levels).map(level => 
-                    `${level}: ${Object.values(user.levels[level].categories).filter(cat => cat.validation).length}`
-                ).join(', ')}</td>
+                <td>${highestLevel}</td>
+                <td>${user.testDate}</td>
             `;
             tableBody.appendChild(row);
         });
@@ -48,32 +60,32 @@ document.addEventListener('DOMContentLoaded', function() {
         displayUsers(filteredUsers);
     });
 
+    // Sorting function
+    function sortUsers(key) {
+        return function(a, b) {
+            if (key === 'level') {
+                const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+                const levelA = calculateUserStats(a).highestLevel;
+                const levelB = calculateUserStats(b).highestLevel;
+                return levels.indexOf(levelB) - levels.indexOf(levelA);
+            } else if (key === 'score') {
+                return calculateUserStats(b).totalScore - calculateUserStats(a).totalScore;
+            } else if (key === 'date') {
+                return new Date(b.testDate) - new Date(a.testDate);
+            } else {
+                return a[key].localeCompare(b[key]);
+            }
+        };
+    }
+
     // Add event listeners for sorting
     document.querySelectorAll('th').forEach(th => {
         th.addEventListener('click', () => {
-            const index = Array.from(th.parentNode.children).indexOf(th);
-            sortTable(index);
-        });
-    });
-
-    function sortTable(column) {
-        const rows = Array.from(tableBody.querySelectorAll('tr'));
-        const isAscending = !tableBody.classList.contains('sorted-asc');
-
-        rows.sort((a, b) => {
-            let aValue = a.cells[column].textContent;
-            let bValue = b.cells[column].textContent;
-
-            if (column === 1) { // Score column
-                return isAscending ? aValue - bValue : bValue - aValue;
-            } else { // Name column
-                return isAscending ? 
-                    aValue.localeCompare(bValue) : 
-                    bValue.localeCompare(aValue);
+            const key = th.dataset.sort;
+            if (key) {
+                users.sort(sortUsers(key));
+                displayUsers(users);
             }
         });
-
-        rows.forEach(row => tableBody.appendChild(row));
-        tableBody.classList.toggle('sorted-asc', isAscending);
-    }
+    });
 });

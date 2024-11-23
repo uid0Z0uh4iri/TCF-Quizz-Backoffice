@@ -14,7 +14,6 @@ input.addEventListener('input', () => {
     }
 });
 
-
 function addUser(name) {
     const users = localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : [];
     const exists = users.find(user => user.name === name);

@@ -242,27 +242,40 @@ function resetGame() {
 }
 
 function printResults() {
-    const originalContent = document.body.innerHTML
     const classesToRemove = ['header']
     const idsToRemove = ['q-a-page', 'starting-page', 'download-btn']
     classesToRemove.forEach(className => {
         const elements = document.querySelectorAll(`.${className}`)
         elements.forEach(element => {
-            element.remove()
+            element.classList.add('hidden')
         })
     })
     document.body.querySelectorAll('*').forEach(element => {
         if (idsToRemove.includes(element.id)) {
-            element.remove()
+            element.classList.add('hidden')
         }
         if (element.classList.contains('download-btn')) {
-            element.remove()
+            element.classList.add('hidden')
         }
     })
 
     document.body.querySelector('#results-page').classList.remove('h-screen', "fixed", "-translate-y-full")
     window.print()
-    document.body.innerHTML = originalContent
+    document.body.querySelector('#results-page').classList.add('h-screen', "fixed", "-translate-y-full")
+    classesToRemove.forEach(className => {
+        const elements = document.querySelectorAll(`.${className}`)
+        elements.forEach(element => {
+            element.classList.remove('hidden')
+        })
+    })
+    document.body.querySelectorAll('*').forEach(element => {
+        if (idsToRemove.includes(element.id)) {
+            element.classList.remove('hidden')
+        }
+        if (element.classList.contains('download-btn')) {
+            element.classList.remove('hidden')
+        }
+    })
 }
 
 function updateQuestions() {

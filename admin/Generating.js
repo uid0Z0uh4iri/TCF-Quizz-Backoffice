@@ -22,7 +22,7 @@ if (Array.isArray(users) && users.length > 0) {
 
     generateButton.addEventListener("click", () => {
 
-      localStorage.setItem("currentUser", JSON.stringify(user));
+      localStorage.setItem("clickedUser", JSON.stringify(user));
       window.location.href = "resultPage.html";
     });
 

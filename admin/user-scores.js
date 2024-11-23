@@ -51,14 +51,24 @@ document.addEventListener('DOMContentLoaded', function() {
     displayUsers(users);
 
     // Add event listener for name search
-    const searchInput = document.getElementById('nameSearch');
-    searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
+    const nameSearchInput = document.getElementById('nameSearch');
+    nameSearchInput.addEventListener('input', filterUsers);
+
+    // Add event listener for date search
+    const dateSearchInput = document.getElementById('dateSearch');
+    dateSearchInput.addEventListener('input', filterUsers);
+
+    // Function to filter users based on name and date
+    function filterUsers() {
+        const nameSearchTerm = nameSearchInput.value.toLowerCase();
+        const dateSearchTerm = dateSearchInput.value;
+
         const filteredUsers = users.filter(user => 
-            user.name.toLowerCase().includes(searchTerm)
+            user.name.toLowerCase().includes(nameSearchTerm) &&
+            user.testDate.includes(dateSearchTerm)
         );
         displayUsers(filteredUsers);
-    });
+    }
 
     // Sorting function
     function sortUsers(key) {

@@ -185,6 +185,7 @@ function endGame() {
     updateUserProgress(Score);
     displayResults();
     updateSelectionAfterGame();
+    calculateTotalScore();
 }
 
 function updateSelectionAfterGame() {
@@ -329,13 +330,13 @@ function saveGameToHistory() {
     currentGame.score = perfectScore ? 10 : 0;
     currentGame.level = levelsKeys[selectedLevel];
     currentGame.category = Object.keys(user.levels[levelsKeys[selectedLevel]].categories)[selectedCategory],
-    currentGame.date = {
-        day: new Date().getDate(),
-        month: new Date().getMonth(),
-        year: new Date().getFullYear(),
-        hour: new Date().getHours(),
-        minute: new Date().getMinutes()
-    }
+        currentGame.date = {
+            day: new Date().getDate(),
+            month: new Date().getMonth(),
+            year: new Date().getFullYear(),
+            hour: new Date().getHours(),
+            minute: new Date().getMinutes()
+        }
     const users = JSON.parse(localStorage.getItem('users'));
     const userIndex = users.findIndex(u => u.id === user.id);
     users[userIndex].games.push(currentGame);

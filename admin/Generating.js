@@ -1,10 +1,10 @@
-const retrievedDataString = localStorage.getItem("usersData");
-const usersData = JSON.parse(retrievedDataString);
+const retrievedDataString = localStorage.getItem("users");
+const users = JSON.parse(retrievedDataString);
 
-if (Array.isArray(usersData) && usersData.length > 0) {
+if (Array.isArray(users) && users.length > 0) {
   const tbody = document.getElementById("GeneratingButton");
 
-  usersData.forEach((user) => {
+  users.forEach((user) => {
     const newRow = document.createElement("tr");
 
     const nameCell = document.createElement("td");
@@ -21,13 +21,12 @@ if (Array.isArray(usersData) && usersData.length > 0) {
       "text-gray-600 text-base font-bold py-2 px-4 rounded";
 
     generateButton.addEventListener("click", () => {
-      localStorage.setItem("currentUserData", JSON.stringify(user));
 
+      localStorage.setItem("clickedUser", JSON.stringify(user));
       window.location.href = "resultPage.html";
     });
 
     buttonCell.appendChild(generateButton);
-w
     newRow.appendChild(nameCell);
     newRow.appendChild(buttonCell);
 

@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const currentUser = JSON.parse(localStorage.getItem("currentUserData"));
+  const clickedUser = JSON.parse(localStorage.getItem("clickedUser"));
 
-  if (currentUser) {
+  if (clickedUser) {
     const nameTitle = document.getElementById("NAMETITLE");
-    nameTitle.innerText = currentUser.name;
+    nameTitle.innerText = clickedUser.name;
 
-    const totalScore = currentUser.games.reduce(
+    const totalScore = clickedUser.games.reduce(
       (total, game) => total + game.score,
       0
     );
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const level = calculateLevel(totalScore);
     levelElement.textContent = level;
 
-    displayResults(currentUser.games);
+    displayResults(clickedUser.games);
   } else {
     console.error("No current user data found in local storage.");
   }
@@ -50,23 +50,23 @@ function displayResults(games) {
 }
 
 document.getElementById("show-correct").addEventListener("change", () => {
-  const currentUser = JSON.parse(localStorage.getItem("currentUserData"));
-  if (currentUser) {
-    filterQuestions(currentUser.games);
+  const clickedUser = JSON.parse(localStorage.getItem("clickedUser"));
+  if (clickedUser) {
+    filterQuestions(clickedUser.games);
   }
 });
 
 document.getElementById("show-wrong").addEventListener("change", () => {
-  const currentUser = JSON.parse(localStorage.getItem("currentUserData"));
-  if (currentUser) {
-    filterQuestions(currentUser.games);
+  const clickedUser = JSON.parse(localStorage.getItem("clickedUser"));
+  if (clickedUser) {
+    filterQuestions(clickedUser.games);
   }
 });
 
 document.getElementById("check-all").addEventListener("change", () => {
-  const currentUser = JSON.parse(localStorage.getItem("currentUserData"));
-  if (currentUser) {
-    filterQuestions(currentUser.games);
+  const clickedUser = JSON.parse(localStorage.getItem("clickedUser"));
+  if (clickedUser) {
+    filterQuestions(clickedUser.games);
   }
 });
 function printResults() {
@@ -109,45 +109,60 @@ function printResults() {
   exit();
 }
 
-function displayQuestionCard(question) {
-  const { question: questionText, answers, choice, ending, time } = question;
+function displayQuestionCard(historyItem) {
+  // Support both type and ending properties
+  const { type, ending, question, answers, choice, time } = historyItem;
+  const status = type || ending; // Use type if available, otherwise use ending
+
+  console.log("Status:", status); // For debugging
 
   const cardHTML = `
-    <div class="z-10 mb-4">
-      <div class="relative w-full h-full rounded-xl z-10 border-2 p-6 border-[
-        ${ending === "correct" ? "#0D4F09" : "#EF4444"}
-      ] bg-gradient-to-b from-[
-        ${ending === "correct" ? "#DCFFDA" : "#FF8A8A"}
-      ] to-white">
-        <h3 class="font-medium text-xl mb-4">${questionText}</h3>
-        <div class="grid grid-cols-2 gap-4">
-          ${answers
-            .map(
-              (answer, index) => `
-            <div class="relative p-4 rounded-xl ${getAnswerStyle(
-              ending,
-              index,
-              choice,
-              answer.correct
-            )}">
-              ${answer.text}
-            </div>
-          `
-            )
-            .join("")}
-        </div>
-        ${time ? `<div class="mt-4 text-right">Time: ${time}s</div>` : ""}
+      <div class="z-10 mb-4">
+          <div class="relative w-full h-full rounded-xl z-10 border-2 p-6 border-[${
+            status === "correct"
+              ? "#0D4F09"
+              : status === "wrong"
+              ? "#EF4444"
+              : status === "timeout"
+              ? "#F59E0B"
+              : "#F59E0B"
+          }] bg-gradient-to-b from-[${
+    status === "correct"
+      ? "#DCFFDA"
+      : status === "wrong"
+      ? "#FF8A8A"
+      : status === "timeout"
+      ? "#FFD6A5"
+      : "#FFD6A5"
+  }] to-white">
+              <h3 class="font-medium text-xl mb-4">${question}</h3>
+              <div class="grid grid-cols-2 gap-4">
+                  ${answers
+                    .map(
+                      (answer, index) => `
+                      <div class="relative p-4 rounded-xl ${getAnswerStyle(
+                        status,
+                        index,
+                        choice,
+                        answer.correct
+                      )}">
+                          ${answer.text}
+                      </div>
+                  `
+                    )
+                    .join("")}
+              </div>
+              ${time ? `<div class="mt-4 text-right">Time: ${time}s</div>` : ""}
+          </div>
       </div>
-    </div>
   `;
-
   return cardHTML;
 }
 
-function getAnswerStyle(ending, index, choice, isCorrect) {
-  if (ending === "correct" && index === parseInt(choice)) {
+function getAnswerStyle(status, index, choice, isCorrect) {
+  if (status === "correct" && index === parseInt(choice)) {
     return "bg-[#8FCA8A] border-2 border-[#0D4F09]";
-  } else if (ending === "wrong" && index === parseInt(choice)) {
+  } else if (status === "wrong" && index === parseInt(choice)) {
     return "bg-[#FF8A8A] border-2 border-[#0D4F09]";
   } else if (isCorrect) {
     return "bg-[#8FCA8A] border-2 border-[#0D4F09]";
@@ -156,10 +171,10 @@ function getAnswerStyle(ending, index, choice, isCorrect) {
   }
 }
 
-function getAnswerBackgroundStyle(type, index, choice, isCorrect) {
-  if (type === "correct" && index === parseInt(choice)) {
+function getAnswerBackgroundStyle(status, index, choice, isCorrect) {
+  if (status === "correct" && index === parseInt(choice)) {
     return "bg-[#2A9023]";
-  } else if (type === "wrong" && index === parseInt(choice)) {
+  } else if (status === "wrong" && index === parseInt(choice)) {
     return "bg-[#B22222]";
   } else if (isCorrect) {
     return "bg-[#2A9023]";
@@ -177,11 +192,11 @@ function calculateLevel(score) {
 }
 
 function exit() {
-  window.location.href = "PDFGenerationg.html";
+  window.location.href = "PDFGeneration.html";
 }
 
 const nameTitle = document.getElementById("NAMETITLE");
-nameTitle.innerText = currentUser[0].name;
+nameTitle.innerText = clickedUser[0].name;
 
 function toggleAll(source) {
   const checkboxes = document.querySelectorAll('input[type="checkbox"]');

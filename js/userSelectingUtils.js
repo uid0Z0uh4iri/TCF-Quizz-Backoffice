@@ -18,7 +18,6 @@ disableStartBtn();
 
 
 function disableStartBtn() {
-    console.log(startBtn);
     const btnDivs = startBtn.querySelectorAll('div');
     btnDivs[0].classList.remove('bg-[#E7803B]');
     btnDivs[0].classList.add('bg-[#AAAAAA]');

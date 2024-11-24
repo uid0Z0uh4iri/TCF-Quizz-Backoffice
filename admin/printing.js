@@ -102,7 +102,6 @@ function printResults() {
   document.body
     .querySelector("#results-page")
     .classList.remove("h-screen", "fixed", "-translate-y-full");
-  console.log(document.body);
 
   // Print the results
   window.print();

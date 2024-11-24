@@ -5,6 +5,7 @@ if (!user) {
     window.location.href = 'login.html';
 }
 
+
 function logout() {
     localStorage.removeItem('currentUser');
     window.location.href = 'login.html';

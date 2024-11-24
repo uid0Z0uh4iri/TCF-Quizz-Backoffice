@@ -185,6 +185,7 @@ function endGame() {
     updateUserProgress(Score);
     displayResults();
     updateSelectionAfterGame();
+    calculateTotalScore();
 }
 
 function updateSelectionAfterGame() {
@@ -242,29 +243,40 @@ function resetGame() {
 }
 
 function printResults() {
-    const originalContent = document.body.innerHTML
     const classesToRemove = ['header']
     const idsToRemove = ['q-a-page', 'starting-page', 'download-btn']
     classesToRemove.forEach(className => {
         const elements = document.querySelectorAll(`.${className}`)
         elements.forEach(element => {
-            element.remove()
+            element.classList.add('hidden')
         })
     })
     document.body.querySelectorAll('*').forEach(element => {
         if (idsToRemove.includes(element.id)) {
-            element.remove()
+            element.classList.add('hidden')
         }
         if (element.classList.contains('download-btn')) {
-            element.remove()
+            element.classList.add('hidden')
         }
     })
 
     document.body.querySelector('#results-page').classList.remove('h-screen', "fixed", "-translate-y-full")
-    console.log(document.body)
-
     window.print()
-    document.body.innerHTML = originalContent
+    document.body.querySelector('#results-page').classList.add('h-screen', "fixed", "-translate-y-full")
+    classesToRemove.forEach(className => {
+        const elements = document.querySelectorAll(`.${className}`)
+        elements.forEach(element => {
+            element.classList.remove('hidden')
+        })
+    })
+    document.body.querySelectorAll('*').forEach(element => {
+        if (idsToRemove.includes(element.id)) {
+            element.classList.remove('hidden')
+        }
+        if (element.classList.contains('download-btn')) {
+            element.classList.remove('hidden')
+        }
+    })
 }
 
 function updateQuestions() {
@@ -286,7 +298,6 @@ function updateUserProgress(score) {
         user.levels[userLevelsKeys[selectedLevel]].categories[userLevCatKeys[selectedCategory]].validation = true;
     } else {
         user.levels[userLevelsKeys[selectedLevel]].categories[userLevCatKeys[selectedCategory]].attempts++;
-        console.log(user)
     }
     localStorage.setItem('currentUser', JSON.stringify(user));
     let users = JSON.parse(localStorage.getItem('users'));
@@ -319,13 +330,13 @@ function saveGameToHistory() {
     currentGame.score = perfectScore ? 10 : 0;
     currentGame.level = levelsKeys[selectedLevel];
     currentGame.category = Object.keys(user.levels[levelsKeys[selectedLevel]].categories)[selectedCategory],
-    currentGame.date = {
-        day: new Date().getDate(),
-        month: new Date().getMonth(),
-        year: new Date().getFullYear(),
-        hour: new Date().getHours(),
-        minute: new Date().getMinutes()
-    }
+        currentGame.date = {
+            day: new Date().getDate(),
+            month: new Date().getMonth(),
+            year: new Date().getFullYear(),
+            hour: new Date().getHours(),
+            minute: new Date().getMinutes()
+        }
     const users = JSON.parse(localStorage.getItem('users'));
     const userIndex = users.findIndex(u => u.id === user.id);
     users[userIndex].games.push(currentGame);

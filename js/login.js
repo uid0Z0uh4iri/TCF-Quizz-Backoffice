@@ -14,7 +14,6 @@ input.addEventListener('input', () => {
     }
 });
 
-
 function addUser(name) {
     const users = localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : [];
     const exists = users.find(user => user.name === name);
@@ -32,7 +31,7 @@ function addUser(name) {
         A1: {
             categories: {
                 grammar: {
-                    validation: true,
+                    validation: false,
                     attempts: 0,
                 },
                 vocabulary: {
@@ -149,7 +148,6 @@ function addUser(name) {
         localStorage.setItem('users', JSON.stringify(users));
         return user;
     } else {
-        console.log('User already exists');
         return exists;
     }
 }

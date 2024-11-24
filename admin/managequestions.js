@@ -51,11 +51,13 @@ function loadQuestions() {
         }
     }
 }
+
 createQuestionBtn.addEventListener("click", () => {
     resetForm();
     questionModal.classList.remove("hidden");
 });
 
+// add answer to the answers array and render it in the Form
 addAnswerBtn.addEventListener("click", () => {
     const answerText = newAnswerInput.value.trim();
     if (answerText) {
@@ -89,19 +91,27 @@ saveQuestionBtn.addEventListener("click", () => {
 });
 
 function renderAnswers() {
+
     answersContainer.innerHTML = "";
+
     answers.forEach((answer, index) => {
         const div = document.createElement("div");
         div.classList.add("flex", "items-center", "space-x-2");
+
         div.innerHTML = `
-      <input type="radio" name="answer" value="${index}" ${answer.correct ? "checked" : ""
+
+            <input type="radio" name="answer" value="${index}" ${answer.correct ? "checked" : ""
             }>
-      <span>${answer.text}</span>
-      <button type="button" class="text-red-500" onclick="removeAnswer(${index})">Remove</button>
-    `;
+
+            <span>${answer.text}</span>
+
+            <button type="button" class="text-red-500" onclick="removeAnswer(${index})">Remove</button>
+            `;
+
         div.querySelector('input[type="radio"]').addEventListener("change", () => {
             answers.forEach((a, i) => (a.correct = i === index));
         });
+
         answersContainer.appendChild(div);
     });
 }
@@ -116,7 +126,7 @@ function resetForm() {
     renderAnswers();
 }
 
-function addQuestion(question, level, cat, fromStorage = false) {
+function addQuestion(question, level, cat, fromStorage = false, onlyToStorage = false) {
     const questionDiv = document.createElement("div");
 
     if (q && !fromStorage) {
@@ -124,6 +134,9 @@ function addQuestion(question, level, cat, fromStorage = false) {
         localStorage.setItem('questions', JSON.stringify(q));
     }
 
+    if (onlyToStorage) {
+        return;
+    }
 
     questionDiv.dataset.id = question.id;
     questionDiv.dataset.level = level;
@@ -177,7 +190,7 @@ function updateQuestion(question, level, cat) {
     q.level[editingLevel][editingCategory] = q.level[editingLevel][editingCategory].filter(q => q.id !== question.id);
 
     // add updated question
-    addQuestion(question, level, cat);
+    addQuestion(question, level, cat, false, true);
 
     localStorage.setItem('questions', JSON.stringify(q));
 }
